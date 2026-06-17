@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Local GPT-Image Agent 开发日志 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── 两侧赛马闸门 ── -->
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c9a84c" opacity="0.8">No.1</text>
+    </svg>
+  </div>
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c9a84c" opacity="0.8">No.8</text>
+    </svg>
+  </div>
+
+  <!-- ── 顶部信号灯 ── -->
+  <div class="top-signal" aria-hidden="true">
+    <div class="signal-dot signal-dot--red" id="sig1"></div>
+    <div class="signal-dot signal-dot--yellow" id="sig2"></div>
+    <div class="signal-dot signal-dot--green" id="sig3"></div>
+  </div>
+
+  <!-- ── 阅读进度条 ── -->
+  <div class="reading-bar" id="readingBar" aria-hidden="true"></div>
+
+  <!-- ── 顶栏 ── -->
+  <nav class="topbar">
+    <a href="index.html" class="topbar-logo">芦毛怪</a>
+    <div class="topbar-links">
+      <a href="index.html" class="topbar-link">Blog</a>
+      <a href="posts.html" class="topbar-link active">Writing</a>
+      <a href="now.html" class="topbar-link">Now</a>
+      <a href="about.html" class="topbar-link">About</a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="langToggle" title="中/EN">🌐</button>
+      <button class="icon-btn" id="themeToggle" title="明暗切换">◐</button>
+    </div>
+  </nav>
+
+  <div class="page-wrap page-wrap--narrow">
+
+    <!-- 文章头部 -->
+    <header class="post-header anim-fade-up" style="--d:0.3s">
+      <a href="posts.html" class="back-link">← 所有文章</a>
+
+      <!-- 文章分类 -->
+      <span class="post-cat cat--dev" style="margin-top:20px;display:inline-block;">开发</span>
+
+      <!-- 文章标题 -->
+      <h1 class="article-title">Local GPT-Image Agent：给 ComfyUI 加一层生产级后端</h1>
+
+      <div class="article-meta">
+        <!-- 发布日期 -->
+        <time class="article-date">2026年6月</time>
+        <!-- 预计阅读时间 -->
+        <span class="article-read-time">· 预计阅读 8 分钟</span>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════
+         ✏️ 正文区域：在下面 article 标签里写你的内容
+         支持的样式：
+           <h2>        二级标题
+           <h3>        三级标题
+           <p>         正文段落
+           <blockquote> 引用块
+           <pre><code> 代码块
+           <ul><li>    无序列表
+           <ol><li>    有序列表
+           <hr>        分隔线
+           <strong>    加粗
+           <em>        斜体
+           <a href=""> 链接
+    ═══════════════════════════════════════ -->
+    <article class="article-body anim-fade-up" style="--d:0.5s">
+
+      <p class="lead">
+        ComfyUI 能跑 Flux 模型，但它的 HTTP API 是同步的 — 请求发过去，等生成完才返回。Agent 调用的时候动不动就超时。我决定给它加一层"后端服务"。
+      </p>
+
+      <h2>背景：为什么需要这层桥</h2>
+
+      <p>
+        我的 MCP 工具 <code>generate_flux_image</code> 调用 ComfyUI 的 API 生成图片。Agent 通过 MCP 调用它，但 ComfyUI 的 <code>/prompt</code> 接口是同步阻塞的：一张 1024×1280 的图跑 24 steps 需要 40-60 秒。Agent 的 HTTP 超时设短了就会断，设长了用户体验差。
+      </p>
+
+      <p>
+        需要一个中间层：Agent → MCP → <strong>Bridge Service</strong> → ComfyUI。Bridge 立刻返回任务 ID，Agent 轮询等结果。
+      </p>
+
+      <h2>架构概览</h2>
+
+      <pre><code>┌─────────┐     MCP      ┌──────────────┐    HTTP     ┌──────────┐
+│  Agent  │ ──────────→  │  Bridge      │ ─────────→  │ ComfyUI  │
+│         │ ←─ poll ──── │  (7861)      │ ←─ result ─ │ (8186)   │
+└─────────┘              │              │             └──────────┘
+                         │ Task Queue   │
+                         │ Task Store   │
+                         │ Worker Pool  │
+                         └──────────────┘</code></pre>
+
+      <p>核心文件 <code>local_image_bridge_v03.py</code>，依赖模块全部拆分到独立文件。</p>
+
+      <h2>分阶段实现</h2>
+
+      <h3>P0 — 异步任务模型（6月10日）</h3>
+
+      <p>最核心的功能：把同步调用拆成提交 + 轮询。</p>
+
+      <ul>
+        <li><code>POST /submit</code> — 提交任务，立刻返回 <code>task_id</code></li>
+        <li><code>GET /task/{task_id}</code> — 查询状态（PENDING → RUNNING → SUCCEEDED / FAILED）</li>
+        <li><code>GET /metrics</code> — 队列大小、成功/失败计数</li>
+        <li>保留旧的 <code>POST /generate-image</code> 同步端点作兼容</li>
+        <li>任务事件持久化到 <code>bridge_data/tasks.jsonl</code>（JSONL 格式，方便事后分析）</li>
+      </ul>
+
+      <p>新增文件：<code>bridge_logging.py</code>、<code>bridge_task_store.py</code>、<code>bridge_worker.py</code>。</p>
+
+      <h3>P1 — 稳定性与路由（6月10-11日）</h3>
+
+      <p>异步骨架跑通后，加生产环境必要的东西：</p>
+
+      <ul>
+        <li><strong>API Key 认证</strong>：可选，在 <code>bridge_config.json</code> 里配 <code>api_key</code>，客户端带 <code>X-API-Key</code> 头</li>
+        <li><strong>令牌桶限流</strong>：每个 API Key 独立限流，超限返回 429</li>
+        <li><strong>Workflow 路由</strong>：请求里传 <code>profile</code>（如 <code>"default"</code>），配置文件决定用哪个 workflow JSON</li>
+        <li><strong>多 Worker</strong>：<code>--workers N</code> 启动 N 个后台线程并行处理</li>
+        <li>MCP 工具的 <code>generate_flux_image</code> 改为走 Bridge 异步模型</li>
+      </ul>
+
+      <p>新增文件：<code>bridge_security.py</code>、<code>bridge_workflow_router.py</code>、<code>bridge_client.py</code> 等。</p>
+
+      <h3>P2 — 运维与量化（6月11日）</h3>
+
+      <p>最后一个阶段，让系统"可观测、可度量"：</p>
+
+      <ul>
+        <li><strong>Prometheus 指标</strong>：<code>GET /metrics</code> 输出 text/plain 格式，含计数器 + 延迟直方图</li>
+        <li><strong>任务取消</strong>：<code>POST /task/{id}/cancel</code>，PENDING 直接取消，RUNNING 尽最大努力中断</li>
+        <li><strong>超时 + 重试</strong>：per-task <code>task_timeout_seconds</code>，<code>max_retries</code> + 指数退避，每次重试记录 <code>__attempt</code></li>
+        <li><strong>审计字段</strong>：每次请求记录 <code>workflow_sha256</code>、<code>comfyui_version</code>、<code>bridge_version</code></li>
+        <li><strong>压测报告</strong>：6 请求 / 2 并发 / 512×512 / 6 steps，100% 成功率，avg 43.6s / p50 42.2s / p95 57.4s</li>
+      </ul>
+
+      <h2>遇到的一个坑：timeout 被覆盖</h2>
+
+      <p>
+        P2 实现重试逻辑时，发现 <code>task_timeout_seconds=1</code> 传进去后实际变成了 <code>900</code>。排查后发现是 <code>bridge_job.py</code> 里有个兜底默认值 900s，覆盖了请求里传的值。改成"请求传了就优先用请求的"后修好。
+      </p>
+
+      <pre><code># bridge_job.py 修前
+task_timeout = max(job.timeout, 900)
+
+# 修后
+task_timeout = job.timeout if job.timeout else 900</code></pre>
+
+      <p>这个 bug 教会我一件事：默认值永远应该是最后一道防线，不应该覆盖显式传入的值。</p>
+
+      <h2>项目结构一览</h2>
+
+      <pre><code>gpt_image_agent/
+├── local_image_bridge_v03.py   # Bridge 主入口
+├── bridge_worker.py            # 后台 Worker
+├── bridge_job.py               # 单任务执行
+├── bridge_task_store.py        # 任务状态持久化
+├── bridge_logging.py           # JSON 结构化日志
+├── bridge_metrics.py           # Prometheus 指标
+├── bridge_observability.py     # request_id / 审计
+├── bridge_security.py          # API Key + 限流
+├── bridge_retry.py             # 重试策略
+├── bridge_cancel.py            # 取消逻辑
+├── bridge_executor.py          # 超时执行器
+├── bridge_policy.py            # 策略配置
+├── bridge_workflow_router.py   # 工作流路由
+├── bridge_client.py            # MCP 客户端
+├── qwenpaw_flux_image_mcp.py   # MCP 工具
+├── bridge_config.json          # 配置文件
+├── openapi.json                # API 文档
+├── Dockerfile.bridge           # 容器化
+├── docker-compose.yml
+├── load_test.py                # 压测脚本
+├── LOAD_TEST_REPORT.md         # 压测报告
+├── bridge_data/tasks.jsonl     # 任务记录
+└── generated_outputs/          # 生成的图片</code></pre>
+
+      <h2>学到了什么</h2>
+
+      <ol>
+        <li><strong>异步化不复杂</strong>：任务队列 + Worker 线程 + 状态轮询，几十行 Python 就能搭起来</li>
+        <li><strong>JSONL 比数据库好用</strong>：几十条任务记录不需要 PostgreSQL，<code>json.dumps() + f.write()</code> 足够，事后 <code>grep | jq</code> 分析</li>
+        <li><strong>限流从第一天就要加</strong>：ComfyUI 本身不支持排队，Bridge 不做限流的话一个 Agent 就能把它打挂</li>
+        <li><strong>压测要早做</strong>：load_test.py 帮我发现了 p95 延迟远高于 avg，说明队列堆积时尾部延迟会爆炸</li>
+        <li><strong>Dockerfile 写到项目里</strong>：哪怕现在用不上，它强迫你想清楚所有环境依赖</li>
+      </ol>
+
+      <p style="color:var(--gold);font-weight:500;">
+        Next: 接入 Prometheus + Grafana，可视化队列深度和延迟分布。🏇
+      </p>
+
+    </article>
+
+    <!-- 文章尾部导航 -->
+    <nav class="post-nav anim-fade-up" style="--d:0.7s">
+      <a href="posts.html" class="post-nav-link">← 回到文章列表</a>
+      <!-- ✏️ 下一篇：有的话改 href 和文字，没有就删掉这行 -->
+      <a href="post.html" class="post-nav-link">下一篇 →</a>
+    </nav>
+
+  </div>
+
+  <footer class="site-footer">
+    <span>最弱无败芦毛怪</span>
+    <span class="sep">·</span>
+    <span>学习日志 &amp; 开发记录</span>
+    <span class="sep">·</span>
+    <span id="footerYear"></span>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
