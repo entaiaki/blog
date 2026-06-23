@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v3.3 升级日志：情绪立绘·悬浮窗·Kokoro TTS — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="serif" font-size="10" fill="#c9a84c" opacity="0.6">1</text>
+    </svg>
+  </div>
+
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="serif" font-size="10" fill="#c9a84c" opacity="0.6">2</text>
+    </svg>
+  </div>
+
+  <!-- ── 顶部导航（赛马信号机） ── -->
+  <div class="topbar">
+    <div class="signal">
+      <div class="signal-dot signal-dot--on"></div>
+      <div class="signal-dot signal-dot--on"></div>
+      <div class="signal-dot signal-dot--off"></div>
+    </div>
+    <a href="index.html" class="site-title">最弱无败芦毛怪</a>
+    <span class="site-sub">学习日志 &amp; 开发记录</span>
+  </div>
+
+  <div class="reading-bar" id="readingBar"></div>
+
+  <div class="page-wrap">
+
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-meta-row">
+          <span class="post-cat cat--dev">开发</span>
+        </div>
+        <h1 class="post-heading">天爱星Agent v3.3 升级日志：情绪立绘·悬浮窗·Kokoro TTS</h1>
+        <time class="post-date-hero" datetime="2026-06-24">2026.06.24</time>
+        <div class="post-reading-time" id="readingTime"></div>
+      </header>
+
+      <div class="post-tldr">
+        <strong>TL;DR</strong> —— 16 种情绪立绘动态切换、桌面悬浮窗前台 Service、Kokoro ONNX 本地 TTS（86MB 模型，零网络延迟）、ChatViewModel 架构重构。APK 245MB，BUILD SUCCESSFUL 零警告。
+      </div>
+
+      <h2>一、16 情绪立绘系统</h2>
+      <p>
+        v3.1 的 7 种情绪（IDLE/HAPPY/THINKING/SHY/SURPRISED/ANGRY/SLEEPING）在实际对话中不够细腻。
+        v3.3 扩展至 16 种，覆盖败犬女主「天爱星」的全部情感光谱：
+      </p>
+
+      <table>
+        <tr><th>序号</th><th>枚举</th><th>标签</th><th>典型场景</th></tr>
+        <tr><td>1</td><td>IDLE</td><td>平常</td><td>默认待机</td></tr>
+        <tr><td>2</td><td>HAPPY</td><td>开心</td><td>用户夸奖</td></tr>
+        <tr><td>3</td><td>THINKING</td><td>思考</td><td>LLM 生成中</td></tr>
+        <tr><td>4</td><td>SAD</td><td>难过</td><td>坏消息</td></tr>
+        <tr><td>5</td><td>ANGRY</td><td>生气</td><td>被冒犯</td></tr>
+        <tr><td>6</td><td>SLEEPING</td><td>睡觉</td><td>长时间无操作</td></tr>
+        <tr><td>7</td><td>SOBBING</td><td>抽泣</td><td>轻度伤心</td></tr>
+        <tr><td>8</td><td>CRYING</td><td>大哭</td><td>重度悲伤</td></tr>
+        <tr><td>9</td><td>DEPRESSED</td><td>消沉</td><td>沮丧/失落</td></tr>
+        <tr><td>10</td><td>DISTRESSED</td><td>困扰</td><td>困惑焦虑</td></tr>
+        <tr><td>11</td><td>DROWSY</td><td>困倦</td><td>累了/想睡</td></tr>
+        <tr><td>12</td><td>SWEATING</td><td>流汗</td><td>紧张/尴尬</td></tr>
+        <tr><td>13</td><td>PAINED</td><td>痛苦</td><td>受伤</td></tr>
+        <tr><td>14</td><td>DISGUSTED</td><td>嫌弃</td><td>厌恶</td></tr>
+        <tr><td>15</td><td>SERIOUS</td><td>严肃</td><td>认真讨论</td></tr>
+        <tr><td>16</td><td>WINK</td><td>眨眼</td><td>俏皮/暗示</td></tr>
+      </table>
+
+      <h3>核心代码</h3>
+      <pre><code>enum class CharacterEmotion(
+    val tagEn: String,
+    val tagZh: String
+) {
+    IDLE("idle", "平常"),
+    HAPPY("happy", "开心"),
+    THINKING("thinking", "思考"),
+    // ... 16 种
+
+    companion object {
+        fun fromTag(tag: String): CharacterEmotion = when {
+            tag.contains("happy", true)  || tag.contains("开心") -> HAPPY
+            tag.contains("think", true)  || tag.contains("思考") -> THINKING
+            // ... 中英文模糊匹配
+            else -> IDLE
+        }
+    }
+}</code></pre>
+
+      <h3>立绘加载链</h3>
+      <pre><code>// CharacterView.kt — 运行时 getIdentifier，缺失降级占位
+val resId = context.resources.getIdentifier(
+    "tianai_${emotion.tagEn}", "drawable", context.packageName
+)
+val painter = if (resId != 0) painterResource(resId)
+              else CharacterPlaceholder.painter(emotion)
+
+// AnimatedContent 280ms fadeIn / 200ms fadeOut
+// isTalking 时 infiniteRepeatable tween 上下浮动 400ms
+</code></pre>
+
+      <h3>情绪解析管道</h3>
+      <pre><code>// EmotionParser.kt — 两阶段提取
+fun parse(raw: String): EmotionResult {
+    // 1. 正则提取 LLM 显式标记
+    val tag = regex.find(raw)?.groupValues?.get(1)
+    val emotion = if (tag != null) CharacterEmotion.fromTag(tag)
+                  else guessEmotion(raw)  // 2. 关键词兜底
+    return EmotionResult(raw.replace(regex, ""), emotion)
+}</code></pre>
+
+      <h2>二、桌面悬浮窗</h2>
+      <p>
+        将天爱星立绘常驻在桌面最上层，像真正的桌宠一样。
+      </p>
+
+      <h3>DesktopAgentService（前台 Service）</h3>
+      <pre><code>class DesktopAgentService : Service() {
+    companion object {
+        private var currentEmotion = CharacterEmotion.IDLE
+        fun updateEmotion(context: Context, emotion: CharacterEmotion) { ... }
+    }
+    // TYPE_APPLICATION_OVERLAY + ComposeView
+    // OnTouchListener 拖拽移动 + 点击回 MainActivity
+    // START_STICKY 被杀重启
+    // startForeground(NOTIF_ID) 常驻通知栏 "天爱星 在线"
+}</code></pre>
+
+      <p>悬浮窗默认 200dp×340dp，右下角定位，可拖拽到任意位置。通知栏显示"天爱星 在线"及"关闭桌宠"按钮。</p>
+
+      <h3>权限流程</h3>
+      <pre><code>// MainActivity.onResume() 检查悬浮窗权限
+if (Settings.canDrawOverlays(this)) {
+    DesktopAgentService.start(this)
+} else {
+    AlertDialog { "请在设置中开启悬浮窗权限" → 跳转设置 }
+}</code></pre>
+
+      <h3>新增 Manifest 声明</h3>
+      <pre><code>&lt;uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/&gt;
+&lt;service
+    android:name=".overlay.DesktopAgentService"
+    android:foregroundServiceType="specialUse"
+    android:exported="false"/&gt;
+&lt;property
+    android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+    android:value="天爱星桌面助手"/&gt;</code></pre>
+
+      <h2>三、Kokoro TTS 本地 ONNX 推理</h2>
+      <p>
+        用 <code>onnxruntime-android</code> 在设备本地运行 Kokoro-82M TTS 模型，
+        零网络延迟，完全离线。
+      </p>
+
+      <h3>模型文件（assets/kokoro/）</h3>
+      <table>
+        <tr><th>文件</th><th>大小</th><th>说明</th></tr>
+        <tr><td><code>model_q8f16.onnx</code></td><td>86 MB</td><td>q8 量化 + fp16 嵌入，最轻量/质量平衡</td></tr>
+        <tr><td><code>voices/zf_xiaobei.bin</code></td><td>522 KB</td><td>中文女声「小北」风格向量</td></tr>
+        <tr><td><code>tokenizer.json</code></td><td>3.5 KB</td><td>字符级 vocab（~400 tokens）</td></tr>
+        <tr><td><code>config.json</code></td><td>44 B</td><td><code>model_type: style_text_to_speech_2</code></td></tr>
+      </table>
+
+      <h3>TTS 分层架构</h3>
+      <pre><code>ChatViewModel
+  → KokoroTTSManager    // 队列管理 / 分句 / isTalking 状态流
+    → KokoroTTSController   // TTSController 接口 / AudioTrack 播放
+      → KokoroTTS           // ONNX 推理核心
+
+// 核心推理链
+fun synthesize(text: String, voiceName: String): FloatArray {
+    val tokens = textToTokens(text)
+    val voice  = loadVoice(voiceName)
+    val input  = OrtTensor(voice + tokens + velocity + prosody)
+    val result = session.run(mapOf("input" to input))
+    return result["audio"]!!.floatArray  // 24000 Hz, MONO, PCM16
+}</code></pre>
+
+      <h3>KokoroTTSManager 队列播放</h3>
+      <pre><code>fun speak(text: String) {
+    val sentences = splitSentences(text)
+    // "你好！今天天气真好。" → ["你好！", "今天天气真好。"]
+    val queue = ArrayDeque(sentences)
+    playQueue()
+}
+
+private fun playQueue() {
+    if (queue.isEmpty()) { _isTalking.value = false; return }
+    val sentence = queue.removeFirst()
+    _state.value = State.Synthesizing(sentence)
+    val wav = kokoro.synthesizeToFile(sentence)
+    _state.value = State.Playing(sentence)
+    playWav(wav) { playQueue() }  // 递归下一句
+}</code></pre>
+
+      <h3>Asset 加载技巧</h3>
+      <p>
+        从 Android assets 加载 ONNX 模型不能直接用路径，需要先用 <code>context.assets.open()</code>
+        读出字节数组，再 <code>OrtSession.create(env, byteArray, sessionOptions)</code>。
+        对于一个 86MB 的模型，读取和解析约需 <strong>2-3 秒</strong>。
+      </p>
+
+      <pre><code>// LightAgentApplication.kt — App 启动时后台预加载
+class LightAgentApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        CoroutineScope(Dispatchers.IO).launch {
+            KokoroTTSManager.getInstance(this@LightAgentApplication).initialize()
+        }
+    }
+}</code></pre>
+
+      <h2>四、ChatViewModel 架构重构</h2>
+      <p>
+        TTS 从不归 ViewModel 管的独立组件，变成 ViewModel 的内置能力。
+        这消除了 ChatScreen 端的重复 TTS 初始化和消息监听。
+      </p>
+
+      <pre><code>class ChatViewModel(application: Application) : AndroidViewModel(application) {
+    // 新增
+    private val ttsManager = KokoroTTSManager.getInstance(application)
+    val isTalking: StateFlow&lt;Boolean&gt; = ttsManager.isTalking
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            ttsManager.initialize()  // 后台加载模型
+        }
+    }
+
+    private fun speakReply(text: String) {
+        try { ttsManager.speak(text) }
+        catch (e: Exception) { Log.w("ChatVM", "TTS failed", e) }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        ttsManager.release()
+    }
+}</code></pre>
+
+      <p>
+        消息发送流程：<code>send()</code> → LLM → EmotionParser → <code>DesktopAgentService.updateEmotion()</code>
+        → <code>speakReply()</code>。ChatScreen 不再直接接触 TTS 组件。
+      </p>
+
+      <h2>五、新增/修改文件清单</h2>
+      <table>
+        <tr><th>文件</th><th>动作</th><th>职责</th></tr>
+        <tr><td><code>character/CharacterEmotion.kt</code></td><td>改</td><td>7→16 种情绪枚举 + fromTag() 中英文模糊匹配</td></tr>
+        <tr><td><code>character/EmotionParser.kt</code></td><td>改</td><td>guessEmotion() 覆盖全部 16 种关键词</td></tr>
+        <tr><td><code>character/CharacterPlaceholder.kt</code></td><td>改</td><td>16 种 emoji + 背景色</td></tr>
+        <tr><td><code>character/CharacterView.kt</code></td><td>改</td><td>16 种情绪适配</td></tr>
+        <tr><td><code>agent/PlannerAgent.kt</code></td><td>改</td><td>systemPrompt 更新 16 情绪指令</td></tr>
+        <tr><td><code>overlay/DesktopAgentService.kt</code></td><td>改</td><td>dpToPx 扩展 + showOverlay dp 化</td></tr>
+        <tr><td><code>tts/KokoroTTS.kt</code></td><td><strong>新</strong></td><td>ONNX 推理核心：vocab/token/合成/WAV</td></tr>
+        <tr><td><code>tts/KokoroTTSController.kt</code></td><td><strong>新</strong></td><td>TTSController 接口实现 + AudioTrack</td></tr>
+        <tr><td><code>tts/KokoroTTSManager.kt</code></td><td><strong>新</strong></td><td>队列管理：分句→合成→逐句播放</td></tr>
+        <tr><td><code>ui/ChatViewModel.kt</code></td><td>改</td><td>内置 TTS + isTalking + speakReply()</td></tr>
+        <tr><td><code>ui/screen/ChatScreen.kt</code></td><td>改</td><td>移除 TTS 直接调用，清理导入</td></tr>
+        <tr><td><code>LightAgentApplication.kt</code></td><td><strong>新</strong></td><td>App 启动预加载 Kokoro 模型</td></tr>
+        <tr><td><code>AndroidManifest.xml</code></td><td>改</td><td>Application class + 悬浮窗权限/Service</td></tr>
+        <tr><td><code>build.gradle</code></td><td>改</td><td>+onnxruntime-android:1.17.3</td></tr>
+        <tr><td><code>app/src/main/assets/kokoro/</code></td><td><strong>新</strong></td><td>模型+tokenizer+voice 文件（~87 MB）</td></tr>
+      </table>
+
+      <h2>技术总结</h2>
+      <table>
+        <tr><th>指标</th><th>v3.1</th><th>v3.3</th></tr>
+        <tr><td>情绪种类</td><td>7</td><td>16</td></tr>
+        <tr><td>悬浮窗</td><td>无</td><td>DesktopAgentService 前台 Service</td></tr>
+        <tr><td>TTS 引擎</td><td>无</td><td>Kokoro ONNX 本地推理</td></tr>
+        <tr><td>TTS 文件</td><td>—</td><td>4 新增（tts/）</td></tr>
+        <tr><td>源文件数</td><td>42+</td><td>48+</td></tr>
+        <tr><td>APK 体积</td><td>~102 MB</td><td>~245 MB</td></tr>
+        <tr><td>构建状态</td><td>零警告</td><td>零警告</td></tr>
+      </table>
+
+      <h2>踩坑记录</h2>
+      <ul>
+        <li>
+          <strong>HuggingFace 文件名 ≠ 用户假设</strong>：
+          实际文件是 <code>model_q8f16.onnx</code>（非 <code>model_q8.onnx</code>）、分语音的单 <code>.bin</code> 文件（非单个 <code>voices.bin</code>）、
+          <code>tokenizer.json</code>（非 <code>tokens.txt</code>）。集成第三方模型前务必用 <code>/tree/main</code> 确认实际文件名。
+        </li>
+        <li>
+          <strong><code>LocalContext.current</code> 不可在 <code>remember</code> 内调用</strong>：
+          <code>remember { TTSController(LocalContext.current) }</code> 编译报错。
+          必须先在 Composable 作用域 <code>val ctx = LocalContext.current</code> 再传入。
+        </li>
+        <li>
+          <strong>ONNX Runtime Android 不支持路径加载 assets</strong>：
+          必须 <code>context.assets.open(file).readBytes()</code> → <code>OrtSession.create(env, byteArray, opts)</code>。
+        </li>
+        <li>
+          <strong>悬浮窗权限需在 <code>onResume</code> 检查</strong>：
+          用户从设置页返回后不会触发 <code>LaunchedEffect</code> 重新执行，只有 <code>onResume</code> 才可靠。
+        </li>
+        <li>
+          <strong>Kokoro audio 输出是 PCM Float 数组（24000Hz, mono）</strong>：
+          直接写 AudioTrack 或用 WAV header 包裹后 MediaPlayer 播放均可。
+          当前方案使用 WAV 文件 + MediaPlayer（Manager 层），避免 AudioTrack 的缓冲区管理问题。
+        </li>
+      </ul>
+
+      <h2>下一步</h2>
+      <ul>
+        <li>KokoroTTSManager 流式合成（LLM 边输出边合成+播放，降低首字延迟）</li>
+        <li>Live2D 模型接入（扩展 Live2DController 接口）</li>
+        <li>isTalking → CharacterView 连线（说话时立绘脉冲动画）</li>
+        <li>签名配置 + release APK 发布</li>
+      </ul>
+
+      <nav class="post-nav">
+        <a class="post-nav-link post-nav-link--prev" href="tian-aixing-agent-v3-upgrade.html">
+          ← 天爱星Agent v3 升级日志
+        </a>
+        <a class="post-nav-link post-nav-link--next" href="tian-aixing-agent-dev-log.html">
+          天爱星Agent 开发全记录 →
+        </a>
+      </nav>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <span>最弱无败芦毛怪</span>
+    <span class="sep">·</span>
+    <span>学习日志 &amp; 开发记录</span>
+    <span class="sep">·</span>
+    <span id="footerYear"></span>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
