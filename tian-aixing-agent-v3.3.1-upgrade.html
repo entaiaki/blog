@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v3.3.1 桌宠动画重构：悬浮窗 · 立绘系统 · 情绪联动 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c9a84c" opacity="0.8">No.1</text>
+    </svg>
+  </div>
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c9a84c" opacity="0.8">No.1</text>
+    </svg>
+  </div>
+
+  <div class="topbar">
+    <div class="signal">
+      <div class="signal-dot signal-dot--on"></div>
+      <div class="signal-dot signal-dot--on"></div>
+      <div class="signal-dot signal-dot--off"></div>
+    </div>
+    <a href="index.html" class="site-title">最弱无败芦毛怪</a>
+    <span class="site-sub">学习日志 &amp; 开发记录</span>
+  </div>
+
+  <div class="reading-bar" id="readingBar"></div>
+
+  <div class="page-wrap">
+
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-meta-row">
+          <span class="post-cat cat--dev">开发</span>
+        </div>
+        <h1 class="post-heading">天爱星Agent v3.3.1 桌宠动画重构</h1>
+        <p class="post-sub">悬浮窗动画系统 · 立绘组件重写 · 情绪角标 · 三层独立动画管线</p>
+        <time class="post-date-full">2026.06.24</time>
+      </header>
+
+      <div class="post-body">
+
+      <h2>动机：桌宠「不像活的」</h2>
+      <p>
+        v3.3 的桌面悬浮窗虽然是前台 Service + Compose，但立绘几乎不动——仅一个上下浮动，
+        且图片加载依赖 <code>getIdentifier</code> 运行时反射，缺失文件时默默降级占位符，
+        用户甚至察觉不到图片没加载成功。
+      </p>
+      <p>
+        这次 v3.3.1 的目标很明确：<strong>让桌面上的天爱星「活起来」</strong>。
+      </p>
+
+      <h2>变更文件清单</h2>
+      <table class="changelog-table">
+        <thead><tr><th>文件</th><th>动作</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">OverlayCharacter.kt</td><td class="tag-rewrite">重写</td><td>呼吸浮动 + 左右摇摆 + 身体微晃 + 16 情绪角标 + 底部标签</td></tr>
+          <tr><td class="mono">CharacterView.kt</td><td class="tag-rewrite">重写</td><td>硬编码 R.drawable + talkBob 口型动画 + slideIn 情绪切换</td></tr>
+          <tr><td class="mono">DesktopAgentService.kt</td><td class="tag-modify">修改</td><td>overlay 尺寸 200×340 → 90×160，移除冲突 Compose clickable</td></tr>
+        </tbody>
+      </table>
+
+      <h2>1. OverlayCharacter 悬浮窗 — 三层动画管线</h2>
+      <p>
+        旧版 OverlayCharacter 仅一个 <code>floatY</code> 动画，现在拆成三条独立叠加的循环：
+      </p>
+      <pre><code>floatY   : 0 ↔ -6dp,  2400ms, FastOutSlowInEasing  (呼吸)
+swayX    : 0 ↔  3dp,  3200ms, CubicBezier(0.4,0,0.6,1)  (左右摇摆)
+swayRot  : -0.8° ↔ 0.8°, 3200ms, CubicBezier          (身体微晃)</code></pre>
+      <p>
+        三条动画周期不同（2400 vs 3200），相位自动错开，看起来像自然体态而非机械重复。
+        叠加在同一个 <code>graphicsLayer { translationY, translationX, rotationZ }</code> 上，
+        无需额外开销。
+      </p>
+
+      <h3>情绪角标 EmotionBadge</h3>
+      <p>
+        悬浮窗右上角新增情绪角标，16 种情绪各有一个 emoji + 背景色：
+      </p>
+      <pre><code>IDLE      → 不可见（默认无角标）
+HAPPY     → 😊  #4CAF50
+THINKING  → 🤔  #2196F3
+SAD       → 😢  #607D8B
+ANGRY     → 😠  #F44336
+SLEEPING  → 💤  #3F51B5
+SOBBING   → 😭  #7B1FA2
+CRYING    → 😭  #E91E63
+DEPRESSED → 😞  #37474F
+DISTRESSED→ 😰  #FF6F00
+DROWSY    → 🥱  #5D4037
+SWEATING  → 😓  #00BCD4
+PAINED    → 😖  #D32F2F
+DISGUSTED → 🤢  #558B2F
+SERIOUS   → 😐  #616161
+WINK      → 😉  #FF9800</code></pre>
+      <p>
+        角标使用 <code>AnimatedVisibility(scaleIn + spring)</code>，情绪切换时自然弹出/收折。
+        IDLE 状态下角标不可见，保持悬浮窗干净。
+      </p>
+
+      <h3>底部标签</h3>
+      <p>
+        悬浮窗底部保留半透明「天爱星」标签（<code>Color(0xAA1A1030)</code> 玻璃质感），
+        圆角 10dp，字号 11sp，灰蓝文字。不抢眼，但让人知道这个桌宠是谁。
+      </p>
+
+      <h2>2. CharacterView 立绘系统 — 从反射到硬编码</h2>
+
+      <h3>旧问题</h3>
+      <ul>
+        <li><code>getIdentifier</code> 运行时按名称查找 R.drawable，缺失时返回 0 → 显示占位方块</li>
+        <li>情绪切换仅 <code>fadeIn/fadeOut</code>，没有空间位移，视觉上像「闪切」</li>
+        <li>说话时 <code>floatY</code> 既做呼吸又做口型，两种频率打架</li>
+        <li>仅 7 种情绪，缺少悲伤/哭泣/沮丧/困乏等日常表情</li>
+      </ul>
+
+      <h3>新设计</h3>
+      <pre><code>// 16 种情绪全部硬编码映射，缺图直接编译报错 → 开发期就能发现
+private fun emotionToDrawable(emotion: CharacterEmotion): Int = when (emotion) {
+    CharacterEmotion.IDLE       -> R.drawable.tianai_idle
+    CharacterEmotion.HAPPY      -> R.drawable.tianai_happy
+    CharacterEmotion.THINKING   -> R.drawable.tianai_thinking
+    CharacterEmotion.SAD        -> R.drawable.tianai_sad
+    CharacterEmotion.ANGRY      -> R.drawable.tianai_angry
+    CharacterEmotion.SLEEPING   -> R.drawable.tianai_sleeping
+    CharacterEmotion.SOBBING    -> R.drawable.tianai_sobbing
+    CharacterEmotion.CRYING     -> R.drawable.tianai_crying
+    CharacterEmotion.DEPRESSED  -> R.drawable.tianai_depressed
+    CharacterEmotion.DISTRESSED -> R.drawable.tianai_distressed
+    CharacterEmotion.DROWSY     -> R.drawable.tianai_drowsy
+    CharacterEmotion.SWEATING   -> R.drawable.tianai_sweating
+    CharacterEmotion.PAINED     -> R.drawable.tianai_pained
+    CharacterEmotion.DISGUSTED  -> R.drawable.tianai_disgusted
+    CharacterEmotion.SERIOUS    -> R.drawable.tianai_serious
+    CharacterEmotion.WINK       -> R.drawable.tianai_wink
+}</code></pre>
+
+      <h3>三层独立动画</h3>
+      <pre><code>floatY     : 呼吸浮动  0 ↔ -6dp (talking: 400ms / idle: 2200ms)
+talkBob    : 口型微动  0 ↔ -4dp (talking only: 280ms)
+talkScale  : 说话脉冲  1 ↔ 1.018 (talking: 280ms / idle: 600ms)
+
+// 叠加：translationY = floatY + talkBob
+// 口型和呼吸互不干扰，各自独立周期</code></pre>
+
+      <h3>情绪切换动画升级</h3>
+      <pre><code>transitionSpec = {
+    (fadeIn(tween(320)) + slideInVertically(
+        animationSpec  = tween(320, easing = FastOutSlowInEasing),
+        initialOffsetY = { it / 14 }    // 新图从下方 7% 处滑入
+    )).togetherWith(
+        fadeOut(tween(240))              // 旧图 240ms 淡出
+    )
+}</code></pre>
+      <p>
+        新图不是凭空出现，而是从略偏下方滑入 + 淡入，配合旧图同时淡出。
+        视觉上像角色「调整姿势」而非「切换图片」。
+      </p>
+
+      <h2>3. DesktopAgentService — 尺寸与交互修正</h2>
+      <p>
+        旧 overlay 尺寸 200×340dp，但 OverlayCharacter 实际内容仅 90×160dp。
+        Window 比内容大 2 倍以上 → 触摸区域有大量空白死区 → 拖拽和点击体验差。
+      </p>
+      <pre><code>// 修正
+- dpToPx(200), dpToPx(340)   →   dpToPx(90), dpToPx(160)</code></pre>
+      <p>
+        同时移除了 OverlayCharacter 的 <code>.clickable {}</code>，因为 Compose 的 clickable
+        会拦截 MotionEvent，导致 <code>setOnTouchListener</code> 的拖拽逻辑失效。
+        现在交互职责清晰分离：
+      </p>
+      <pre><code>WindowManager.setOnTouchListener  →  拖拽移动 + 点击回 MainActivity
+Compose OverlayCharacter          →  纯视觉：浮动+摇摆+立绘+角标</code></pre>
+
+      <h2>构建结果</h2>
+      <pre><code>BUILD SUCCESSFUL in 2s
+38 actionable tasks: 7 executed, 31 up-to-date
+零警告</code></pre>
+      <p>
+        APK 仍为 ~245MB（86MB Kokoro 模型 + 资源），功能可用性无退化。
+      </p>
+
+      <h2>视觉效果对比</h2>
+      <table class="changelog-table">
+        <thead><tr><th>维度</th><th>v3.3</th><th>v3.3.1</th></tr></thead>
+        <tbody>
+          <tr><td>悬浮窗动画</td><td>单层浮动 (floatY)</td><td>三层独立 (floatY + swayX + swayRot)</td></tr>
+          <tr><td>情绪角标</td><td>无</td><td>16 种 emoji + 背景色，AnimatedVisibility</td></tr>
+          <tr><td>立绘加载</td><td>getIdentifier 运行时反射</td><td>R.drawable 编译时硬编码</td></tr>
+          <tr><td>口型动画</td><td>无（与呼吸共用 floatY）</td><td>talkBob 独立 280ms 微动</td></tr>
+          <tr><td>情绪切换</td><td>fadeIn/fadeOut</td><td>fadeIn + slideIn + fadeOut</td></tr>
+          <tr><td>悬浮窗尺寸</td><td>200×340dp（空余大）</td><td>90×160dp（贴合内容）</td></tr>
+          <tr><td>交互冲突</td><td>Compose clickable 拦截拖拽</td><td>仅 WindowManager 处理交互</td></tr>
+          <tr><td>图片数量</td><td>7 情绪 + 占位降级</td><td>16 情绪 硬编码，缺图编译报错</td></tr>
+        </tbody>
+      </table>
+
+      <h2>下一步</h2>
+      <ul>
+        <li>KokoroTTSManager 流式合成（LLM 边输出边合成+播放）</li>
+        <li>Live2D 模型接入</li>
+        <li>悬浮窗拖拽边界约束 + 吸附边缘效果</li>
+        <li>APK 瘦身（WebP 立绘、模型量化进一步压缩）</li>
+      </ul>
+
+      <nav class="post-nav">
+        <a class="post-nav-link post-nav-link--prev" href="tian-aixing-agent-v3.3-upgrade.html">
+          ← 天爱星Agent v3.3 升级日志
+        </a>
+        <a class="post-nav-link post-nav-link--next" href="tian-aixing-agent-v3-upgrade.html">
+          天爱星Agent v3 升级日志 →
+        </a>
+      </nav>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <span>最弱无败芦毛怪</span>
+    <span class="sep">·</span>
+    <span>学习日志 &amp; 开发记录</span>
+    <span class="sep">·</span>
+    <span id="footerYear"></span>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
