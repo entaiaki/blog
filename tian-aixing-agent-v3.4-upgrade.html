@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v3.4：立绘背景一体化 &amp; 前台/后台联动 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c9a84c" opacity="0.8">No.1</text>
+    </svg>
+  </div>
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c9a84c" opacity="0.8">No.1</text>
+    </svg>
+  </div>
+
+  <div class="topbar">
+    <div class="signal">
+      <div class="signal-dot signal-dot--on"></div>
+      <div class="signal-dot signal-dot--on"></div>
+      <div class="signal-dot signal-dot--off"></div>
+    </div>
+    <a href="index.html" class="site-title">最弱无败芦毛怪</a>
+    <span class="site-sub">学习日志 &amp; 开发记录</span>
+  </div>
+
+  <div class="reading-bar" id="readingBar"></div>
+
+  <div class="page-wrap">
+
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-meta-row">
+          <span class="post-cat cat--dev">开发</span>
+        </div>
+        <h1 class="post-heading">天爱星Agent v3.4：立绘背景一体化 &amp; 前台/后台联动</h1>
+        <p class="post-sub">GalGameChatLayout 架构简化 · DesktopAgentService 可见性切换 · MainActivity 生命周期接管 · GalMessageBubble 打字机动画</p>
+        <time class="post-date-full">2026.06.24</time>
+      </header>
+
+      <div class="post-body">
+
+      <h2>动机：三层变两层，前台无悬浮窗</h2>
+      <p>
+        v3.3/v3.3.1 的聊天界面有 <strong>ChatBackground（独立背景组件） + CharacterView（立绘组件）</strong> 两层叠加，
+        架构冗余且立绘存在感不够。同时悬浮窗在 App 前台和后台都显示，用户聊天时右下角还有一个桌宠——多余。
+      </p>
+      <p>v3.4 做两件事：<strong>立绘直接当全屏背景</strong>、<strong>前台隐藏悬浮窗/后台显示</strong>。</p>
+
+      <h2>变更文件清单</h2>
+      <table class="changelog-table">
+        <thead><tr><th>文件</th><th>动作</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">GalGameChatLayout.kt</td><td class="tag-rewrite">重写</td><td>立绘直接当全屏背景，移除 ChatBackground 层</td></tr>
+          <tr><td class="mono">DesktopAgentService.kt</td><td class="tag-rewrite">重写</td><td>View.VISIBLE/GONE 切换替代 add/remove，新增 SHOW/HIDE action</td></tr>
+          <tr><td class="mono">MainActivity.kt</td><td class="tag-rewrite">重写</td><td>onResume→hideOverlay / onPause→showOverlay 统一接管</td></tr>
+          <tr><td class="mono">ChatScreen.kt</td><td class="tag-modify">清理</td><td>移除悬浮窗 LaunchedEffect + AlertDialog，由 MainActivity 集中管理</td></tr>
+        </tbody>
+      </table>
+
+      <h2>1. 立绘背景一体化</h2>
+      <pre><code>旧 4 层：底色 → ChatBackground → 渐变蒙层 → UI
+新 4 层：底色 → GalBackgroundCharacter（立绘满屏）→ 渐变蒙层 → UI
+                                    ↑
+                  立绘就是背景，不再需要 ChatBackground 组件</code></pre>
+      <p>
+        <code>GalBackgroundCharacter</code> 内联 CharacterView，充满全屏、底部对齐、padding(bottom=64dp) 防止脚被输入栏遮挡。
+        情绪切换时 <code>AnimatedContent</code> 交叉淡入淡出 + slideIn 从下方 10% 进入。
+      </p>
+
+      <h2>2. 前台/后台联动</h2>
+      <pre><code>App 启动     → startForegroundService() → 创建 View 但设 GONE
+App 在前台   → View.GONE                  用户看聊天界面
+按 Home 键   → onPause()                   → View.VISIBLE  桌宠出现
+切回 App    → onResume()                  → View.GONE     桌宠消失</code></pre>
+      <p>关键：使用 <code>View.VISIBLE</code>/<code>View.GONE</code> 切换，不销毁 Compose 树，零闪烁。</p>
+
+      <h3>MainActivity 生命周期接管</h3>
+      <pre><code>onResume()  → DesktopAgentService.hideOverlay()  + 权限检查
+onPause()   → DesktopAgentService.showOverlay()
+onStop()    → DesktopAgentService.start()          （双保险）</code></pre>
+
+      <h3>DesktopAgentService 新增 Action</h3>
+      <pre><code>ACTION_SHOW  → overlayView.visibility = View.VISIBLE
+ACTION_HIDE  → overlayView.visibility = View.GONE
+ACTION_START → showOverlay() + visibility = GONE（默认隐藏）</code></pre>
+
+      <h2>3. GalMessageBubble 打字机动画</h2>
+      <pre><code>弹入动画：spring(BouncyDamping, BouncyStiffness) + translateY 24→0
+打字机逐字：中文标点智能延迟
+    。！？.!? → 50ms
+    ，,；;   → 18ms
+    \n       → 70ms
+    其他     → 9ms
+气泡宽度：fillMaxWidth(0.62f) + widthIn(max=230dp)</code></pre>
+
+      <h2>4. ChatInputBar 增强</h2>
+      <pre><code>加载中：按钮旋转 90° 变 × 图标（Icons.Default.Close）
+有文字：btnScale=1.0, btnTint=AccentPurple, borderAlpha=0.75
+空文字：btnScale=0.92, btnAlpha=0.35, borderAlpha=0.2
+maxLines=4 支持多行输入
+navigationBarsPadding() 适配全面屏手势</code></pre>
+
+      <h2>构建结果</h2>
+      <pre><code>BUILD SUCCESSFUL in 2s
+38 actionable tasks: 6 executed, 32 up-to-date
+零警告（仅一个预存 live2DController 未用）</code></pre>
+
+      <h2>视觉效果对比</h2>
+      <table class="changelog-table">
+        <thead><tr><th>维度</th><th>v3.3.1</th><th>v3.4</th></tr></thead>
+        <tbody>
+          <tr><td>背景层数</td><td>ChatBackground + CharacterView 两层</td><td>立绘即背景，单层</td></tr>
+          <tr><td>消息气泡</td><td>简单入场 + 文本</td><td>spring 弹入 + 打字机逐字</td></tr>
+          <tr><td>输入栏按钮</td><td>缩放动画</td><td>缩放+旋转+变色，加载中变 ×</td></tr>
+          <tr><td>前台悬浮窗</td><td>一直显示（聊天时也可见桌宠）</td><td>前台隐藏，后台才出现</td></tr>
+          <tr><td>权限引导</td><td>ChatScreen 内部 AlertDialog</td><td>MainActivity.onResume 统一处理</td></tr>
+          <tr><td>悬浮窗切换</td><td>addView/removeView（闪烁）</td><td>View.VISIBLE/GONE（零闪烁）</td></tr>
+        </tbody>
+      </table>
+
+      <h2>下一步</h2>
+      <ul>
+        <li>KokoroTTSManager 流式合成（LLM 边输出边合成+播放）</li>
+        <li>Live2D 模型接入</li>
+        <li>桌面悬浮窗拖拽边界约束 + 吸附边缘效果</li>
+        <li>APK 瘦身（WebP 立绘、模型量化压缩）</li>
+      </ul>
+
+      <nav class="post-nav">
+        <a class="post-nav-link post-nav-link--prev" href="tian-aixing-agent-v3.3.1-upgrade.html">
+          ← 天爱星Agent v3.3.1 桌宠动画重构
+        </a>
+        <a class="post-nav-link post-nav-link--next" href="tian-aixing-agent-v3.3-upgrade.html">
+          天爱星Agent v3.3 升级日志 →
+        </a>
+      </nav>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <span>最弱无败芦毛怪</span>
+    <span class="sep">·</span>
+    <span>学习日志 &amp; 开发记录</span>
+    <span class="sep">·</span>
+    <span id="footerYear"></span>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
