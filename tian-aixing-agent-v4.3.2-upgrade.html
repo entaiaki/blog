@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v4.3.1→v4.3.2：悬浮可输入聊天 + 桌宠右上角 X — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <main class="post-main">
+    <article class="post-article">
+
+      <header class="post-header">
+        <p class="post-kicker">开发日志 · LightAgent for Android</p>
+        <h1>天爱星Agent v4.3.1→v4.3.2</h1>
+        <p class="post-subtitle">悬浮窗可输入聊天 + 桌宠右上角 X + 键盘自适应</p>
+        <p class="post-date">2026-06-24</p>
+      </header>
+
+      <section class="post-section">
+        <h2>一、悬浮聊天框：从「只读」到「可输入」</h2>
+
+        <p>v4.3 的悬浮聊天框只能看欢迎语——没有输入框，不接 LLM。v4.3.2 彻底重写：</p>
+
+        <h3>1.1 ChatOverlayController — 焦点 + 键盘</h3>
+
+        <table class="post-table">
+          <thead>
+            <tr><th>Flag</th><th>旧</th><th>新</th><th>含义</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>FLAG_NOT_FOCUSABLE</code></td><td>✅</td><td>❌ 移除</td><td>阻止窗口获得输入焦点 → TextField 点不了</td></tr>
+            <tr><td><code>FLAG_LAYOUT_NO_LIMITS</code></td><td>❌</td><td>✅</td><td>允许窗口延伸到屏幕边缘外、键盘区域外</td></tr>
+            <tr><td><code>SOFT_INPUT_ADJUST_RESIZE</code></td><td>❌</td><td>✅</td><td>键盘弹出时压缩布局，不挡输入框</td></tr>
+          </tbody>
+        </table>
+
+        <pre class="code-block"><code>val params = WindowManager.LayoutParams(
+    MATCH_PARENT, MATCH_PARENT,
+    TYPE_APPLICATION_OVERLAY,
+    FLAG_LAYOUT_IN_SCREEN or FLAG_LAYOUT_NO_LIMITS,  // ← 关键
+    PixelFormat.TRANSLUCENT
+).apply {
+    gravity = Gravity.CENTER
+    softInputMode = SOFT_INPUT_ADJUST_RESIZE             // ← 关键
+}</code></pre>
+
+        <h3>1.2 ChatOverlay — 完整聊天 UI</h3>
+
+        <p>从 v4.3 的「欢迎语 + 静态卡片」变为：</p>
+
+        <ul>
+          <li><code>LazyColumn</code> 消息历史（user / assistant 气泡）</li>
+          <li><code>OutlinedTextField</code> 多行输入框</li>
+          <li>发送按钮 → <code>PlannerAgent.create(context, history).chatWithEmotion(text)</code></li>
+          <li>情绪同步 → <code>CharacterStateHolder.emotion = result.emotion</code></li>
+          <li>Loading 状态 + 错误处理</li>
+        </ul>
+
+        <p>这样桌宠点击出来的聊天框就是 <strong>真正的 LLM 对话</strong>，不用切回 App。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>二、桌宠右上角 X 按钮</h2>
+
+        <p>之前关桌宠只能：长按 → AlertDialog → 点「关闭桌宠」。三步操作太绕。</p>
+
+        <p>v4.3.2 加 <code>onClose</code> 参数，右上角放 26dp IconButton（Close 图标）：</p>
+
+        <pre class="code-block"><code>Box(modifier = Modifier.size(90.dp, 160.dp)) {
+    // 角色图 + 动画 + 触摸
+    Box(modifier = Modifier.fillMaxSize().pointerInput(...) { ... }) {
+        CharacterBackground(...)
+    }
+    // 右上角 X
+    IconButton(
+        onClick = onClose,
+        modifier = Modifier.align(Alignment.TopEnd).size(26.dp)
+    ) {
+        Icon(Icons.Default.Close, "关闭桌宠", tint = Color.White)
+    }
+}</code></pre>
+
+        <p>交互行为明确分层：</p>
+
+        <table class="post-table">
+          <thead>
+            <tr><th>操作</th><th>效果</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>点桌宠身体</td><td>弹出悬浮聊天框（InteractionBridge）</td></tr>
+            <tr><td>点聊天框右上角 X</td><td>只关聊天框，桌宠还在</td></tr>
+            <tr><td>点桌宠右上角 X</td><td>关桌宠 + stopSelf</td></tr>
+            <tr><td>长按桌宠</td><td>AlertDialog（关闭桌宠 / 打开 App）</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>三、变更清单</h2>
+
+        <table class="post-table">
+          <thead>
+            <tr><th>文件</th><th>变更</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>overlay/ChatOverlayController.kt</code></td><td>FLAG_NOT_FOCUSABLE → FLAG_LAYOUT_NO_LIMITS + SOFT_INPUT_ADJUST_RESIZE</td></tr>
+            <tr><td><code>overlay/ChatOverlay.kt</code></td><td>完整重写：消息列表 + TextField + PlannerAgent LLM + 情绪同步</td></tr>
+            <tr><td><code>overlay/DesktopPetView.kt</code></td><td>+onClose 参数 + 外层 Box + 右上角 X IconButton</td></tr>
+            <tr><td><code>overlay/DesktopAgentService.kt</code></td><td>DesktopPetView 调用处 +onClose → hidePet + stopSelf</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>四、构建信息</h2>
+
+        <ul>
+          <li>APK：245 MB（68 Kotlin 源文件）</li>
+          <li>源码：7929 行 / 288 KB</li>
+          <li>编译：BUILD SUCCESSFUL，零 warning</li>
+        </ul>
+      </section>
+
+      <footer class="post-footer">
+        <p class="post-back"><a href="index.html">← 返回首页</a></p>
+      </footer>
+
+    </article>
+  </main>
+
+</body>
+</html>
