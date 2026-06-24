@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v4.3.6→v4.3.7：折叠判断修复 &amp; 桌宠极简化 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+    </svg>
+  </div>
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+    </svg>
+  </div>
+
+  <main class="post-main">
+    <article class="post-article">
+      <header class="post-header">
+        <p class="post-kicker">开发日志 · LightAgent for Android</p>
+        <h1>天爱星Agent v4.3.6→v4.3.7</h1>
+        <p class="post-subtitle">折叠判断修复 + 桌宠触控极简化</p>
+        <p class="post-date">2026-06-24</p>
+      </header>
+
+      <section class="post-section">
+        <h2>问题 1：fallbackDetectFolded 毁了全部设备</h2>
+        <p>v4.3.5~v4.3.6 的 fallback 逻辑用了 <code>ratio > 1.0f</code>：</p>
+        <table>
+          <tr><th>设备</th><th>ratio</th><th>结果</th></tr>
+          <tr><td>手机竖屏</td><td>~0.5</td><td>正常</td></tr>
+          <tr><td>手机横屏</td><td>>1</td><td><span class="badge-err">误判"折叠"</span></td></tr>
+          <tr><td>平板</td><td>>1</td><td><span class="badge-err">误判"折叠"</span></td></tr>
+          <tr><td>折叠外屏</td><td>>1</td><td>正确（巧合）</td></tr>
+        </table>
+        <p><strong>所有横屏设备都被当成了折叠外屏，UI 全坏。</strong></p>
+      </section>
+
+      <section class="post-section">
+        <h2>修复：三状态 ScreenMode + 合理阈值</h2>
+
+        <pre class="code-block"><code>enum class ScreenMode {
+    INNER_EXPANDED,   // 内屏展开 → 完整 UI
+    OUTER_COMPACT,    // 外屏/折叠 → 舞台窗口
+    UNKNOWN
+}
+
+private fun detectScreenMode(): ScreenMode {
+    val ratio = dm.widthPixels / dm.heightPixels
+    return when {
+        ratio &lt; 0.8f  -> INNER_EXPANDED   // 竖屏
+        ratio &lt;= 1.4f -> INNER_EXPANDED   // 近正方形
+        ratio > 1.4f  -> OUTER_COMPACT    // 明显横向
+        else          -> UNKNOWN
+    }
+}</code></pre>
+
+        <p>关键：只有 <strong>ratio > 1.4</strong> 才算外屏。平板/手机横屏通常在 1.3~1.8，但折叠外屏更窄更长（~2.0+）；1.4 是合理的折中点。</p>
+
+        <p><code>WindowInfoTracker</code> 路径优先：有 <code>FoldingFeature</code> 时直接用 HAL 层状态（<code>FLAT</code> vs <code>HALF_OPENED</code>），ratio fallback 仅用于非折叠设备。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>外屏 UI：FoldAwareContainer + 舞台窗口</h2>
+
+        <pre class="code-block"><code>@Composable
+fun FoldAwareContainer(content: @Composable () -> Unit) {
+    val mode = LocalScreenMode.current
+    when (mode) {
+        OUTER_COMPACT -> {
+            Box(Modifier.fillMaxSize(), contentAlignment = Center) {
+                Box(
+                    Modifier.fillMaxHeight().width(320.dp),
+                    contentAlignment = Center
+                ) { content() }
+            }
+        }
+        else -> Box(Modifier.fillMaxSize()) { content() }
+    }
+}</code></pre>
+
+        <p>外屏角色渲染改为：<code>fillMaxHeight().width(280.dp)</code> + <code>ContentScale.Crop</code> + <code>Alignment.Center</code>。不再是全屏铺满——变成了"舞台窗口"。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>问题 2：桌宠触控过度设计</h2>
+        <p>v4.3.6 的 OverlayTouchController 有 7 个回调 + 3 种交互（拖拽/点击/长按）+ 二次确认——但用户只需要两件事：</p>
+        <ol>
+          <li>点 X → 关闭桌宠</li>
+          <li>点角色 → 打开 App</li>
+        </ol>
+      </section>
+
+      <section class="post-section">
+        <h2>修复：极简 setOnTouchListener</h2>
+
+        <pre class="code-block"><code>composeView.setOnTouchListener { _, event ->
+    when (event.action) {
+        MotionEvent.ACTION_UP -> {
+            if (isInCloseZone(event.x, event.y)) {
+                dismissPetWindowOnly()    // X → 关闭
+            } else {
+                openMainApp()             // 角色 → 回 App
+            }
+        }
+    }
+    true
+}</code></pre>
+
+        <p>8 行代码替代了 OverlayTouchController（113 行）、FloatingTouchController（118 行）、GestureDetector、二次确认 toast 等全部组件。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>变更对比</h2>
+        <table>
+          <tr><th>维度</th><th>v4.3.6</th><th>v4.3.7</th></tr>
+          <tr><td>折叠判断</td><td><code>ratio > 1.0f</code>（所有横屏误判）</td><td><code>ratio > 1.4f</code>（精准三状态）</td></tr>
+          <tr><td>屏幕状态</td><td><code>LocalIsFolded: Boolean</code></td><td><code>LocalScreenMode: ScreenMode</code></td></tr>
+          <tr><td>外屏 UI</td><td>全屏 fillMaxSize</td><td>320dp 窄窗口 + Crop 居中</td></tr>
+          <tr><td>桌宠触控</td><td>OverlayTouchController（7回调）</td><td>setOnTouchListener（8行）</td></tr>
+          <tr><td>桌宠交互</td><td>拖拽+点击+长按+二次确认</td><td>X关闭 + 点角色回App</td></tr>
+          <tr><td>编译警告</td><td>0</td><td>0</td></tr>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>构建指标</h2>
+        <table>
+          <tr><td>构建结果</td><td><span class="badge-ok">BUILD SUCCESSFUL</span>（零 warning）</td></tr>
+          <tr><td>Kotlin 文件</td><td>69 个</td></tr>
+          <tr><td>源码行数</td><td>7,118 行</td></tr>
+          <tr><td>源码导出</td><td>295 KB</td></tr>
+          <tr><td>APK</td><td>238 MB</td></tr>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>变更文件</h2>
+        <ul>
+          <li><strong>MainActivity.kt</strong> — <code>LocalIsFolded (Boolean)</code> → <code>LocalScreenMode (enum)</code>；ratio > 1.0f → > 1.4f</li>
+          <li><strong>GalGameChatLayout.kt</strong> — 新增 <code>FoldAwareContainer</code>；外屏角色 width(280dp) + Crop + Center</li>
+          <li><strong>DesktopAgentService.kt</strong> — 移除 OverlayTouchController / FloatingTouchController / GestureDetector；极简 setOnTouchListener</li>
+        </ul>
+        <p><code>OverlayTouchController.kt</code> 和 <code>FloatingTouchController.kt</code> 保留在源码中但不再被引用，可供后续恢复拖拽功能时使用。</p>
+      </section>
+    </article>
+  </main>
+</body>
+</html>
