@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v4.3.3→v4.3.4：两层事件分流 &amp; X/身体物理隔离 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+    </svg>
+  </div>
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+    </svg>
+  </div>
+
+  <main class="post-main">
+    <article class="post-article">
+      <header class="post-header">
+        <p class="post-kicker">开发日志 · LightAgent for Android</p>
+        <h1>天爱星Agent v4.3.3→v4.3.4</h1>
+        <p class="post-subtitle">两层事件分流：X 与身体物理隔离，彻底消灭误关闭</p>
+        <p class="post-date">2026-06-24</p>
+      </header>
+
+      <section class="post-section">
+        <h2>根因：手势系统混用导致事件污染</h2>
+
+        <p>v4.3.3 的问题是 GestureDetector 统一拦截所有触摸事件，然后用 <code>isCloseButtonHit(e)</code> 坐标判断是 X 还是身体。坐标抖动 → 误判 → <code>stopSelf()</code> 杀掉服务。</p>
+
+        <p>v4.3.4 改为<strong>两层分流、物理隔离</strong>：</p>
+
+        <pre class="code-block"><code>composeView.setOnTouchListener { _, event ->
+    when (event.action) {
+        ACTION_DOWN -> {
+            touchStartedInCloseZone = isInCloseZone(event)
+            if (touchStartedInCloseZone) return@setOnTouchListener true  // ← X 区域，消费
+        }
+        ACTION_UP -> {
+            if (touchStartedInCloseZone) {
+                if (isInCloseZone(event)) dismissPetWindowOnly()  // ← 只移除窗口
+                touchStartedInCloseZone = false
+                return@setOnTouchListener true
+            }
+        }
+    }
+    // ↓ 非 X 区域，走原有手势系统
+    gestureDetector.onTouchEvent(event)
+}</code></pre>
+
+        <table class="post-table">
+          <thead><tr><th>对比</th><th>v4.3.3</th><th>v4.3.4</th></tr></thead>
+          <tbody>
+            <tr><td>手势系统</td><td>GestureDetector 包揽一切</td><td>View 层先分流，GestureDetector 只处理身体</td></tr>
+            <tr><td>X 判断</td><td>onSingleTapConfirmed 内坐标猜</td><td>ACTION_DOWN 阶段就分流</td></tr>
+            <tr><td>关闭行为</td><td>hidePet + stopSelf</td><td>dismissPetWindowOnly（不杀服务）</td></tr>
+            <tr><td>误关闭风险</td><td>高（坐标漂移）</td><td>无（物理隔离）</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>交互行为表（最终版）</h2>
+
+        <table class="post-table">
+          <thead><tr><th>操作</th><th>效果</th><th>涉及 stopSelf？</th></tr></thead>
+          <tbody>
+            <tr><td>点身体</td><td>弹出聊天框 + LLM + 驱动表情</td><td>❌</td></tr>
+            <tr><td>点右上角 X</td><td>隐藏桌宠窗口，Service 存活</td><td>❌</td></tr>
+            <tr><td>长按 → 彻底退出</td><td>hidePet + stopSelf</td><td>✅ 唯一入口</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>变更清单</h2>
+
+        <table class="post-table">
+          <thead><tr><th>文件</th><th>变更</th></tr></thead>
+          <tbody>
+            <tr><td><code>overlay/DesktopPetView.kt</code></td><td>精简：移除所有参数，纯 UI 渲染（无手势）</td></tr>
+            <tr><td><code>overlay/DesktopAgentService.kt</code></td><td>+isInCloseZone + touchStartedInCloseZone 两层分流；+dismissPetWindowOnly；GestureDetector 只负责身体</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>构建信息</h2>
+        <ul>
+          <li>APK：245 MB（68 Kotlin 源文件）</li>
+          <li>源码：7961 行 / 289 KB</li>
+          <li>编译：BUILD SUCCESSFUL，零 warning</li>
+        </ul>
+      </section>
+
+      <footer class="post-footer">
+        <p class="post-back"><a href="index.html">← 返回首页</a></p>
+      </footer>
+    </article>
+  </main>
+</body>
+</html>
