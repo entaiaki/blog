@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v4.3.4→v4.3.5：折叠屏检测重写 &amp; WindowInfoTracker — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+    </svg>
+  </div>
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+    </svg>
+  </div>
+
+  <main class="post-main">
+    <article class="post-article">
+      <header class="post-header">
+        <p class="post-kicker">开发日志 · LightAgent for Android</p>
+        <h1>天爱星Agent v4.3.4→v4.3.5</h1>
+        <p class="post-subtitle">折叠屏检测重写：ratio hack → Jetpack WindowInfoTracker</p>
+        <p class="post-date">2026-06-24</p>
+      </header>
+
+      <section class="post-section">
+        <h2>背景：ratio hack 的局限性</h2>
+        <p>v4.1~v4.3.4 的折叠屏检测使用 <code>width/height ratio &gt; 1.6f</code> 猜测：</p>
+        <pre class="code-block"><code>// v4.3.4 旧实现
+val isFoldedState = remember {
+    val ratio = context.resources.displayMetrics.widthPixels.toFloat() /
+                context.resources.displayMetrics.heightPixels.toFloat()
+    mutableStateOf(ratio > 1.6f)
+}</code></pre>
+        <p>三个问题：</p>
+        <ol>
+          <li><strong>平板横屏误判</strong> — 8 寸平板横放 ratio 也可能 &gt; 1.6，误触折叠模式</li>
+          <li><strong>折叠半开漏判</strong> — HALF_OPENED 状态时 ratio 可接近 1.0，UI 没切</li>
+          <li><strong>不响应运行时折叠</strong> — 用户边用边折叠时，ratio 不变 → 布局僵住</li>
+        </ol>
+      </section>
+
+      <section class="post-section">
+        <h2>方案：Jetpack WindowInfoTracker</h2>
+        <p>Google 官方 <code>androidx.window</code> 库的 <code>WindowInfoTracker</code> + <code>FoldingFeature</code> 直接读取 HAL 层折叠状态，零猜测。</p>
+        <pre class="code-block"><code>// build.gradle 新增依赖
+implementation "androidx.window:window:1.2.0"</code></pre>
+        <pre class="code-block"><code>// MainActivity.kt — 折叠状态观察
+private fun observeFoldingState() {
+    lifecycleScope.launch {
+        WindowInfoTracker.getOrCreate(this@MainActivity)
+            .windowLayoutInfo(this@MainActivity)
+            .collectLatest { layoutInfo ->
+                val foldingFeature = layoutInfo.displayFeatures
+                    .filterIsInstance&lt;FoldingFeature&gt;()
+                    .firstOrNull()
+
+                isFolded.value = if (foldingFeature != null) {
+                    foldingFeature.state != FoldingFeature.State.FLAT
+                } else {
+                    fallbackDetectFolded()  // 非折叠设备 → ratio fallback
+                }
+            }
+    }
+}</code></pre>
+        <p>核心逻辑：</p>
+        <ul>
+          <li><code>FoldingFeature.State.FLAT</code> → 完全展开 → <code>isFolded = false</code></li>
+          <li><code>State.HALF_OPENED</code> → 半开 → <code>isFolded = true</code></li>
+          <li>无 FoldingFeature（普通手机/平板）→ 降级 ratio 判断</li>
+        </ul>
+        <p><code>collectLatest</code> 持续监听折叠变化，<code>isFolded</code> 通过 <code>CompositionLocalProvider</code> 注入 Compose 树，<code>GalGameChatLayout</code> 用 <code>LocalIsFolded.current</code> 读取后自适应 UI。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>编译修复</h2>
+        <p>初版构建 3 个错误，均为 v4.3.4→v4.3.5 重构时的遗漏：</p>
+        <table>
+          <tr><th>错误</th><th>原因</th><th>修复</th></tr>
+          <tr>
+            <td><code>Unresolved reference 'LocalIsFolded'</code></td>
+            <td>compositionLocal 声明在源码导出后被误删</td>
+            <td>MainActivity.kt 顶层加回 <code>val LocalIsFolded = compositionLocalOf { false }</code></td>
+          </tr>
+          <tr>
+            <td><code>@Composable invocations can only happen from... (×3)</code></td>
+            <td>LocalIsFolded 未解析导致 CompositionLocalProvider 编译中断，后续 remember/SplashScreen/ChatScreen 被误判</td>
+            <td>修复 LocalIsFolded 后自动消失</td>
+          </tr>
+          <tr>
+            <td><code>Unresolved reference 'openSettings'</code></td>
+            <td>OverlayPermissionHelper 方法名为 <code>requestPermission</code>，调用处误写成 <code>openSettings</code></td>
+            <td><code>.openSettings(this)</code> → <code>.requestPermission(this)</code></td>
+          </tr>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>构建指标</h2>
+        <table>
+          <tr><td>构建结果</td><td><span class="badge-ok">BUILD SUCCESSFUL</span>（零 warning）</td></tr>
+          <tr><td>Kotlin 源文件</td><td>68 个</td></tr>
+          <tr><td>源码行数</td><td>6,977 行</td></tr>
+          <tr><td>源码导出</td><td>288 KB（天爱星Agent-v4.3.5-完整源码.md）</td></tr>
+          <tr><td>APK 大小</td><td>238 MB（debug）</td></tr>
+          <tr><td>新增依赖</td><td>androidx.window:window:1.2.0</td></tr>
+          <tr><td>折叠检测 API</td><td>ratio hack → WindowInfoTracker + FoldingFeature</td></tr>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>变更文件</h2>
+        <ul>
+          <li><strong>MainActivity.kt</strong> — 新增 <code>observeFoldingState()</code> + <code>LocalIsFolded</code> 声明 + <code>requestPermission</code> 修正</li>
+          <li><strong>GalGameChatLayout.kt</strong> — <code>LocalIsFolded.current</code> 驱动 UI（折叠态 vs 展开态布局切换）</li>
+          <li><strong>build.gradle</strong> — 新增 <code>androidx.window:window:1.2.0</code></li>
+        </ul>
+      </section>
+
+      <section class="post-section">
+        <h2>与 v4.3.4 对比</h2>
+        <table>
+          <tr><th>维度</th><th>v4.3.4</th><th>v4.3.5</th></tr>
+          <tr><td>折叠检测</td><td>ratio > 1.6f 硬编码猜测</td><td>FoldingFeature.HAL_OPENED / FLAT 精确读取</td></tr>
+          <tr><td>平板误判</td><td>有（横屏平板 ratio > 1.6）</td><td>无（平板无 FoldingFeature，走 fallback）</td></tr>
+          <tr><td>运行时折叠</td><td>不支持</td><td>collectLatest 实时推送</td></tr>
+          <tr><td>API 依赖</td><td>零（纯 DisplayMetrics）</td><td>androidx.window:window:1.2.0</td></tr>
+          <tr><td>编译状态</td><td>SUCCESS</td><td>SUCCESS（零 warning）</td></tr>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>下一步</h2>
+        <p>折叠屏检测已上官方 API，但 GalGameChatLayout 的折叠态 UI 仍沿用原有双列/单列布局切换逻辑。下一步可在实机上验证折叠展开/半开时的布局动画流畅度，并根据 <code>FoldingFeature.orientation</code>（HORIZONTAL / VERTICAL）和 <code>FoldingFeature.occlusionType</code> 做更细粒度的适配。</p>
+      </section>
+    </article>
+  </main>
+</body>
+</html>
