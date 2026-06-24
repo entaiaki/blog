@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v3.6：背景套系系统 &amp; 悬浮窗修复 &amp; 生命周期治理 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c9a84c" opacity="0.8">No.1</text>
+    </svg>
+  </div>
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c9a84c" opacity="0.8">No.2</text>
+    </svg>
+  </div>
+
+  <div class="topbar">
+    <div class="signal">
+      <div class="signal-dot signal-dot--on"></div>
+      <div class="signal-dot signal-dot--on"></div>
+      <div class="signal-dot signal-dot--off"></div>
+    </div>
+    <a href="index.html" class="site-title">最弱无败芦毛怪</a>
+    <span class="site-sub">学习日志 &amp; 开发记录</span>
+  </div>
+
+  <div class="reading-bar" id="readingBar"></div>
+
+  <div class="page-wrap">
+
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-meta-row">
+          <span class="post-cat cat--dev">开发</span>
+        </div>
+        <h1 class="post-heading">天爱星Agent v3.6：背景套系系统 &amp; 悬浮窗修复 &amp; 生命周期治理</h1>
+        <p class="post-sub">6 套主题背景切换 · 套系内精细化选图 · 悬浮窗可见性 &amp; 生命周期解耦 · Gal 布局背景图真正接入 · onPause/onStop 竞态修正</p>
+        <time class="post-date-full">2026.06.24</time>
+      </header>
+
+      <div class="post-body">
+
+      <h2>动机：背景不应只是一个纯色</h2>
+      <p>
+        v3.5 及之前，Galgame 布局的"背景"实际上被 <code>@Suppress("UNUSED_PARAMETER")</code> 忽略了——
+        一直是个纯黑渐变兜底。用户早已可以在设置里切换背景，但由于 <code>GalGameChatLayout</code>
+        从未消费 <code>background</code> 参数，无论怎么选都看不到效果。<br/><br/>
+        v3.6 一次性解决三个问题：<strong>背景图真正渲染</strong>、<strong>套系系统（六套主题各有 6 张图）</strong>、
+        以及 <strong>悬浮窗与 Activity 生命周期的精准治理</strong>。
+      </p>
+
+      <h2>Core 1：背景套系系统</h2>
+
+      <h3>BackgroundViewModel — 套系定义与选择</h3>
+      <p>
+        新增 <code>data class BackgroundTheme</code>，包含 id / name / emoji / folder / fileNames。
+        六大套系各自拥有 6 张图片（存放在 <code>assets/backgrounds/{folder}/</code> 下）：
+      </p>
+      <table class="changelog-table">
+        <thead><tr><th>套系</th><th>emoji</th><th>文件夹</th><th>图片</th></tr></thead>
+        <tbody>
+          <tr><td>深夜星空</td><td>🌌</td><td class="mono">night/</td><td>night_1~6.png</td></tr>
+          <tr><td>樱花物语</td><td>🌸</td><td class="mono">sakura/</td><td>sakura_1~6.png</td></tr>
+          <tr><td>深海之境</td><td>🌊</td><td class="mono">ocean/</td><td>ocean_1~6.png</td></tr>
+          <tr><td>幽静森林</td><td>🌿</td><td class="mono">forest/</td><td>forest_1~6.png</td></tr>
+          <tr><td>赛博霓虹</td><td>🌃</td><td class="mono">cyberpunk/</td><td>cyberpunk_1~6.png</td></tr>
+          <tr><td>纯色渐变</td><td>🎨</td><td class="mono">—</td><td>无图片，渐变色兜底</td></tr>
+        </tbody>
+      </table>
+
+      <p>新增 API：</p>
+      <ul>
+        <li><code>selectTheme(theme)</code> — 切换到指定套系，随机选图</li>
+        <li><code>randomInCurrentTheme()</code> — 在当前套系内随机换图（避开当前）</li>
+        <li><code>selectSpecificAsset(path)</code> — 选中套系内的指定图片</li>
+        <li><code>currentTheme: StateFlow&lt;BackgroundTheme&gt;</code> — 当前套系响应式状态</li>
+        <li>旧 <code>randomBackground()</code> 保留为 <code>randomInCurrentTheme()</code> 的别名，完全向后兼容</li>
+      </ul>
+
+      <h3>BackgroundSettingsSheet — 套系选择 UI</h3>
+      <p>
+        从旧的回调式弹窗（<code>onRandomBackground</code> / <code>onCustomBackground</code> / <code>onResetDefault</code>）
+        重构为直接依赖 <code>BackgroundViewModel</code> 的 <code>ModalBottomSheet</code>：
+      </p>
+      <ul>
+        <li><strong>LazyRow 卡片</strong>：六套系 72dp 渐变圆角方块 + emoji + 选中白边框 + 右上角 ✓</li>
+        <li><strong>LazyVerticalGrid 缩略网格</strong>：当前套系 6 张图片的 3 列预览，点击直接切换</li>
+        <li><strong>"随机换一张" 按钮</strong>：在当前套系内随机</li>
+        <li><strong>Coil AsyncImage</strong>：从 <code>assets/backgrounds/</code> 加载缩略图</li>
+        <li><strong>相册自选</strong> + <strong>恢复默认</strong></li>
+      </ul>
+
+      <h2>Core 2：GalGameChatLayout 背景真正渲染</h2>
+      <p>
+        移除 <code>@Suppress("UNUSED_PARAMETER")</code>，新增 <code>GalBackground</code> 私有 composable，
+        根据 <code>BackgroundSource</code> 枚举分发渲染：
+      </p>
+      <table class="changelog-table">
+        <thead><tr><th>BackgroundSource</th><th>渲染方式</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Asset(fileName)</td><td>Coil 加载 <code>file:///android_asset/backgrounds/{fileName}</code>，ContentScale.Crop</td></tr>
+          <tr><td class="mono">Custom(uri)</td><td>Coil 加载用户自选 URI</td></tr>
+          <tr><td class="mono">SolidColor</td><td>三层垂直渐变纯色兜底</td></tr>
+        </tbody>
+      </table>
+      <p>
+        布局层次（从底到顶）重构为 5 层：<br/>
+        <strong>背景图</strong> → <strong>半透明遮罩</strong>（0.25α 黑色覆盖，提升文字可读性）→
+        <strong>立绘</strong>（GalBackgroundCharacter）→ <strong>渐变蒙层</strong>（底部渐黑）→ <strong>UI 层</strong>
+      </p>
+
+      <h2>Core 3：悬浮窗 &amp; 生命周期精准治理</h2>
+
+      <h3>DesktopAgentService — 可见性与启动解耦</h3>
+      <table class="changelog-table">
+        <thead><tr><th>Action</th><th>旧行为</th><th>新行为</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">ACTION_START</td><td>操作 View 可见性 + startForeground（逻辑纠缠）</td><td>仅确保 foreground 存活，View 首次创建默认 GONE</td></tr>
+          <tr><td class="mono">ACTION_SHOW</td><td>—</td><td>新增：View.VISIBLE</td></tr>
+          <tr><td class="mono">ACTION_HIDE</td><td>—</td><td>新增：View.GONE</td></tr>
+        </tbody>
+      </table>
+      <p>
+        <code>hideOverlay()</code> 改用 <code>startService</code> 而非 <code>startForegroundService</code>，
+        Service 未运行时不崩溃。
+      </p>
+
+      <h3>MainActivity — onPause/onStop 竞态修正</h3>
+      <table class="changelog-table">
+        <thead><tr><th>生命周期</th><th>旧行为</th><th>新行为</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">onResume</td><td>hideOverlay + 权限检查</td><td>不变</td></tr>
+          <tr><td class="mono">onPause</td><td>showOverlay（可能与 onStop 的 start 冲突）</td><td><strong>空操作</strong></td></tr>
+          <tr><td class="mono">onStop</td><td>仅 start（"双保险"）</td><td>start <strong>+ showOverlay</strong>，统一管理后台悬浮窗唤醒</td></tr>
+        </tbody>
+      </table>
+      <p>
+        旧逻辑：<code>onPause</code> 调 <code>showOverlay</code> → 紧接着 <code>onStop</code> 调 <code>start</code>
+        可能重置 View 状态。新逻辑：所有悬浮窗操作集中于 <code>onStop</code>，先确保 Service 活，再显示 View。
+      </p>
+
+      <h2>变更文件清单</h2>
+      <table class="changelog-table">
+        <thead><tr><th>文件</th><th>动作</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">BackgroundViewModel.kt</td><td class="tag-rewrite">重写</td><td>+ BackgroundTheme 套系系统，6 套 × 6 图，selectTheme / randomInCurrentTheme / selectSpecificAsset</td></tr>
+          <tr><td class="mono">BackgroundSettingsSheet.kt</td><td class="tag-rewrite">重写</td><td>回调式 → ViewModel 驱动 ModalBottomSheet，LazyRow 卡片 + Grid 缩略 + Coil 加载</td></tr>
+          <tr><td class="mono">GalGameChatLayout.kt</td><td class="tag-modify">重写</td><td>移除 @Suppress，+GalBackground 真正渲染背景图，5 层布局重构</td></tr>
+          <tr><td class="mono">DesktopAgentService.kt</td><td class="tag-rewrite">重构</td><td>ACTION_START/SHOW/HIDE 解耦，View 默认 GONE，hideOverlay 改用 startService</td></tr>
+          <tr><td class="mono">MainActivity.kt</td><td class="tag-modify">修改</td><td>onPause 清空，onStop 合并 start + showOverlay</td></tr>
+          <tr><td class="mono">ChatScreen.kt</td><td class="tag-modify">修改</td><td>BackgroundSettingsSheet 调用点适配新签名</td></tr>
+          <tr><td class="mono">Color.kt</td><td class="tag-modify">新增</td><td>+ Emerald 选中态颜色</td></tr>
+        </tbody>
+      </table>
+
+      <h2>技术细节</h2>
+
+      <h3>Coil 加载 assets 图片</h3>
+      <pre><code>// BackgroundSettingsSheet 缩略图
+ImageRequest.Builder(context)
+    .data("file:///android_asset/backgrounds/$assetPath")
+    .crossfade(true)
+    .build()
+
+// GalBackground 全屏背景
+AsyncImage(
+    model = ...,
+    contentScale = ContentScale.Crop,
+    modifier = Modifier.fillMaxSize()
+)</code></pre>
+
+      <h3>套系持久化</h3>
+      <pre><code>// 保存套系 ID + 当前图片路径
+prefs.edit()
+    .putString(KEY_THEME_ID, theme.id)  // 套系
+    .putString(KEY_ASSET, path)         // 图片
+    .apply()</code></pre>
+      <p>重启后自动恢复到上次套系 + 上次图片。</p>
+
+      <h3>Activity 生命周期非对称处理</h3>
+      <pre><code>onResume  → hideOverlay     // 回到前台：收悬浮窗
+onPause   → (no-op)          // 不抢 onStop 的活
+onStop    → start + show     // 退到后台：先保活，再显示</code></pre>
+
+      <h2>构建</h2>
+      <table class="changelog-table">
+        <thead><tr><th>指标</th><th>值</th></tr></thead>
+        <tbody>
+          <tr><td>APK</td><td class="mono">app-debug.apk — 245 MB</td></tr>
+          <tr><td>Kotlin 源码</td><td>5,698 行 / 52 文件</td></tr>
+          <tr><td>编译结果</td><td>BUILD SUCCESSFUL — 零错误零警告</td></tr>
+        </tbody>
+      </table>
+
+      <h2>下步</h2>
+      <ul>
+        <li>准备套系图片资源（6 套 × 6 张 PNG）放入 <code>assets/backgrounds/</code></li>
+        <li>连接 Live2D 模型（若有可用 Cubism 模型包）</li>
+        <li>优化 KokoroTTSManager 流式合成延迟</li>
+        <li>APK 瘦身（WebP 立绘+背景、模型量化）</li>
+      </ul>
+
+      <nav class="post-nav">
+        <a href="tian-aixing-agent-v3.5-upgrade.html" class="post-nav-link">← v3.5：LLM 流式 &amp; 折叠屏</a>
+        <a href="index.html" class="post-nav-link">🏠 首页</a>
+      </nav>
+
+      </div>
+    </article>
+
+  </div>
+
+  <script>
+    window.addEventListener('scroll', function(){
+      var doc = document.documentElement;
+      var scrollTop = doc.scrollTop || document.body.scrollTop;
+      var scrollHeight = doc.scrollHeight - doc.clientHeight;
+      var scrolled = scrollHeight ? (scrollTop / scrollHeight) * 100 : 0;
+      document.getElementById('readingBar').style.width = scrolled + '%';
+    });
+  </script>
+</body>
+</html>
