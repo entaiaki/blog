@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v4.4.0：音乐模块 · 自然语言听歌 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+    </svg>
+  </div>
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+    </svg>
+  </div>
+
+  <main class="post-main">
+    <article class="post-article">
+      <header class="post-header">
+        <p class="post-kicker">开发日志 · LightAgent for Android</p>
+        <h1>天爱星Agent v4.4.0</h1>
+        <p class="post-subtitle">新增完整音乐模块：自然语言控制播放 · 本地扫描 · MediaSession · 歌词 · NeriPlayer桥接</p>
+        <p class="post-date">2026-06-24</p>
+      </header>
+
+      <section class="post-section">
+        <h2>🎯 动机</h2>
+        <p>之前天爱星只能聊天、记笔记、设提醒、查天气。用户说「放首歌」她听不懂。</p>
+        <p>v4.4.0 参考两个开源音乐项目——<strong>NeriPlayer</strong>（Android 聚合播放器，多音源+无损下载）和 <strong>ECHO NEXT</strong>（桌面 Electron HiFi 播放器）——将音乐能力完整封入天爱星同一 APK，通过 PlannerAgent → MusicTool 工具调用链路，实现对音乐的<strong>自然语言控制</strong>。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>🏗️ 架构</h2>
+
+        <pre class="code-block"><code>用户: "天爱星，放首周杰伦的晴天"
+  → PlannerAgent 识别意图
+  → TOOL: music_control   PARAMS: {"action":"play","query":"周杰伦 晴天"}
+  → MusicTool.execute()
+  → MusicRepository.playSearch()
+  → LocalMusicSource.scan()        // 先查本地 MediaStore
+  → [无结果] NeriPlayerBridge     // 降级到 NeriPlayer
+  → MusicPlaybackService.play()   // 前台 Service 播放
+  → StateFlow 更新 → UI 刷新</code></pre>
+
+        <p><strong>全进程内完成</strong>，不走 Intent 跳转，零延迟。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>📁 新增 13 个文件</h2>
+        <table>
+          <tr><th>文件</th><th>职责</th></tr>
+          <tr><td><code>music/model/Song.kt</code></td><td>歌曲数据模型 + SongFactory (Parcelable)</td></tr>
+          <tr><td><code>music/model/PlaybackState.kt</code></td><td>播放状态模型 (StateFlow 驱动 UI)</td></tr>
+          <tr><td><code>music/model/LyricLine.kt</code></td><td>歌词行模型</td></tr>
+          <tr><td><code>music/MusicRepository.kt</code></td><td>音源统一仓库（本地优先→NeriPlayer降级）</td></tr>
+          <tr><td><code>music/LocalMusicSource.kt</code></td><td>MediaStore 本地扫描（过滤<30s）</td></tr>
+          <tr><td><code>music/NeriPlayerBridge.kt</code></td><td>NeriPlayer MediaSession 远程桥接</td></tr>
+          <tr><td><code>music/MusicPlaybackService.kt</code></td><td>前台 Service：MediaPlayer + MediaSession + 通知栏</td></tr>
+          <tr><td><code>music/LyricManager.kt</code></td><td>LRC 歌词解析 + 二分查找定位</td></tr>
+          <tr><td><code>tools/MusicTool.kt</code></td><td>Tool 接口实现（8 种 action）</td></tr>
+          <tr><td><code>memory/MusicPreferenceDao.kt</code></td><td>Room：音乐偏好 + 播放历史</td></tr>
+          <tr><td><code>ui/music/MusicOverlayCard.kt</code></td><td>桌宠旁悬浮歌词卡片</td></tr>
+          <tr><td><code>ui/music/MusicPlayerPanel.kt</code></td><td>完整播放面板：歌词滚动+控制栏</td></tr>
+          <tr><td><code>天爱星Agent-v4.4.0-完整源码.md</code></td><td>全部源码归档文档</td></tr>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>🎮 支持的 8 种操作</h2>
+        <table>
+          <tr><th>action</th><th>参数</th><th>示例</th></tr>
+          <tr><td><code>play</code></td><td>query: 歌名/歌手/心情</td><td>"放首轻音乐"</td></tr>
+          <tr><td><code>pause</code></td><td>—</td><td>"暂停"</td></tr>
+          <tr><td><code>resume</code></td><td>—</td><td>"继续"</td></tr>
+          <tr><td><code>next</code></td><td>—</td><td>"下一首"</td></tr>
+          <tr><td><code>previous</code></td><td>—</td><td>"上一首"</td></tr>
+          <tr><td><code>stop</code></td><td>—</td><td>"别放了"</td></tr>
+          <tr><td><code>set_volume</code></td><td>value: 0.0–1.0</td><td>"音量调到 50%"</td></tr>
+          <tr><td><code>set_mode</code></td><td>mode: sequence/shuffle/repeat_one/repeat_all</td><td>"随机播放"</td></tr>
+          <tr><td><code>get_current</code></td><td>—</td><td>"现在放的是什么"</td></tr>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>🔧 修改的 6 个现有文件</h2>
+        <table>
+          <tr><th>文件</th><th>变更</th></tr>
+          <tr><td><code>agent/PlannerAgent.kt</code></td><td>新增 MusicTool + system prompt 增加 music_control 指令</td></tr>
+          <tr><td><code>memory/UserProfileMemory.kt</code></td><td>AgentDatabase 新增 MusicPreferenceEntity / PlayHistoryEntity / musicPreferenceDao()，version 2→3</td></tr>
+          <tr><td><code>MainActivity.kt</code></td><td>onCreate() 中 startService(MusicPlaybackService)</td></tr>
+          <tr><td><code>AndroidManifest.xml</code></td><td>注册 Service + 新增 FOREGROUND_SERVICE_MEDIA_PLAYBACK / READ_MEDIA_AUDIO 权限</td></tr>
+          <tr><td><code>app/build.gradle</code></td><td>新增 kotlin-parcelize 插件 + media3-exoplayer/1.4.1 + media compat</td></tr>
+          <tr><td>版本号</td><td>versionCode 1→2 / versionName 1.0→4.4.0</td></tr>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>📦 编译结果</h2>
+        <table>
+          <tr><td>APK 文件名</td><td><code>app-debug.apk</code></td></tr>
+          <tr><td>大小</td><td><strong>237 MB</strong></td></tr>
+          <tr><td>位置</td><td><code>F:\agent项目\LightAgent\app\build\outputs\apk\debug\</code></td></tr>
+          <tr><td>编译工具</td><td>Gradle 8.4 · Kotlin 1.9 · AGP 8.x</td></tr>
+          <tr><td>最低 SDK</td><td>API 26 (Android 8.0)</td></tr>
+        </table>
+        <p>体积较大主要是 Kokoro ONNX TTS 模型（assets/kokoro/）占大头，后续可做模型精简或按需下载。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>🚧 已知限制 & 下版本计划</h2>
+        <ul>
+          <li>NeriPlayer 桥接依赖对方 App 已安装；未安装时自动降级不崩溃</li>
+          <li>在线音源聚合目前仅预留接口，实际仅走本地 MediaStore</li>
+          <li>歌词需音乐文件自带 LRC 元数据，未做在线歌词抓取</li>
+          <li>v4.4.1 计划：在线音源引擎 · 美观播放 UI 集成到 ChatScreen · 心情点歌推荐</li>
+        </ul>
+      </section>
+
+      <nav class="post-nav">
+        <a href="tian-aixing-agent-v4.3.7-upgrade.html">← v4.3.7 折叠判断修复</a>
+        <span></span>
+      </nav>
+    </article>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
