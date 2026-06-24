@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v4.3.2→v4.3.3：LLM 请求修复 &amp; 手势精准化 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <main class="post-main">
+    <article class="post-article">
+
+      <header class="post-header">
+        <p class="post-kicker">开发日志 · LightAgent for Android</p>
+        <h1>天爱星Agent v4.3.2→v4.3.3</h1>
+        <p class="post-subtitle">LLM endpoint 自动补全 + runBlocking 移除 + X 按钮坐标精准化 + 历史去重</p>
+        <p class="post-date">2026-06-24</p>
+      </header>
+
+      <section class="post-section">
+        <h2>一、LLM 请求地址自动补全</h2>
+
+        <p>之前 <code>LLMConfig.endpoint</code> 直接返回原始 URL。用户填 <code>https://api.openai.com/v1</code>，就 POST 到它——缺少 <code>/chat/completions</code> 后缀，API 返回 404。</p>
+
+        <pre class="code-block"><code>val endpoint: String
+    get() {
+        val raw = (if (provider == LLMProvider.CUSTOM) customUrl
+                   else provider.baseUrl).trim().trimEnd('/')
+
+        return if (raw.endsWith("/chat/completions")) raw
+               else "$raw/chat/completions"
+    }</code></pre>
+
+        <p>现在无论填 <code>/v1</code> 还是 <code>/v1/chat/completions</code>，都保证发到正确地址。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>二、chatStream() — 移除 runBlocking</h2>
+
+        <table class="post-table">
+          <thead>
+            <tr><th></th><th>旧</th><th>新</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>循环</td><td><code>reader.forEachLine { }</code></td><td><code>while(true) { reader.readLine() }</code></td></tr>
+            <tr><td>emit</td><td><code>runBlocking { emit(content) }</code></td><td><code>emit(content)</code> 直接调用</td></tr>
+            <tr><td>delta 取值</td><td><code>.getJSONObject("delta")</code>（NPE 风险）</td><td><code>.optJSONObject("delta")</code>（安全）</td></tr>
+          </tbody>
+        </table>
+
+        <p><code>runBlocking</code> 在 Flow 协程内硬堵线程，会导致流式输出卡死或 UI 永远收不到回复。直接 <code>emit</code> 走 Flow 内建通道，稳且快。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>三、桌宠 X 按钮坐标精准判断</h2>
+
+        <p>v4.3.2 用 <code>IconButton</code>——Material 默认最小触控区远大于 26dp，点身体也触发关闭。</p>
+
+        <p>v4.3.3 改为：</p>
+
+        <ul>
+          <li><strong>Compose 层：</strong>移除 <code>pointerInput</code> + <code>IconButton</code>，X 用纯 <code>Box</code> 只画图标</li>
+          <li><strong>Service 层：</strong>GestureDetector 用 <code>isCloseButtonHit(e)</code> 按坐标判断</li>
+        </ul>
+
+        <pre class="code-block"><code>fun isCloseButtonHit(e: MotionEvent): Boolean {
+    val closeSize = dpToPx(30)
+    return e.x >= composeView.width - closeSize && e.y <= closeSize
+}
+
+override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+    if (isCloseButtonHit(e)) {
+        hidePet(); stopSelf()
+    } else {
+        InteractionBridge.requestChat()
+    }
+    return true
+}</code></pre>
+
+        <p>只有手指确实落在右上角 30px 范围内才关闭桌宠，其余全部弹出聊天框。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>四、悬浮窗聊天历史去重</h2>
+
+        <p>ChatOverlay 发送消息时先 <code>messages.add(userMessage)</code>，再构建 history 发给 PlannerAgent。但 PlannerAgent.chat() 内部也会把当前消息加一次 → 用户消息在 context 里出现两次。</p>
+
+        <pre class="code-block"><code>// ❌ 旧
+val history = messages.map { ... }
+
+// ✅ 修
+val history = messages
+    .dropLast(1)
+    .filter { it.content.isNotBlank() }
+    .map { ... }</code></pre>
+      </section>
+
+      <section class="post-section">
+        <h2>五、变更清单</h2>
+
+        <table class="post-table">
+          <thead>
+            <tr><th>文件</th><th>变更</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>llm/LLMClient.kt</code></td><td>endpoint 自动补 /chat/completions；chatStream 换 while 循环 + 直接 emit</td></tr>
+            <tr><td><code>overlay/DesktopPetView.kt</code></td><td>移除 pointerInput + IconButton；X 改为纯 Box 展示</td></tr>
+            <tr><td><code>overlay/DesktopAgentService.kt</code></td><td>新增 isCloseButtonHit + 点击坐标分流</td></tr>
+            <tr><td><code>overlay/ChatOverlay.kt</code></td><td>history 构建时 dropLast(1) 防重复</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>六、构建信息</h2>
+
+        <ul>
+          <li>APK：245 MB（68 Kotlin 源文件）</li>
+          <li>源码：7943 行 / 288 KB</li>
+          <li>编译：BUILD SUCCESSFUL</li>
+        </ul>
+      </section>
+
+      <footer class="post-footer">
+        <p class="post-back"><a href="index.html">← 返回首页</a></p>
+      </footer>
+
+    </article>
+  </main>
+
+</body>
+</html>
