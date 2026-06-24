@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v4.2→v4.3：全局状态中心 &amp; 桌宠点击系统 &amp; 惯性拖拽 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <main class="post-main">
+    <article class="post-article">
+
+      <header class="post-header">
+        <p class="post-kicker">开发日志 · LightAgent for Android</p>
+        <h1 class="post-title">天爱星Agent v4.2 → v4.3<br/>全局状态中心 &amp; 桌宠点击系统 &amp; 惯性拖拽</h1>
+        <p class="post-sub">CharacterStateHolder · EmotionBridge · PetCommandCenter · ChatOverlay悬浮聊天 · 速度追踪惯性动画 · 长按关闭菜单</p>
+        <time class="post-date-full">2026.06.24</time>
+      </header>
+
+      <div class="post-body">
+
+      <h2>动机：App 内和桌宠应该是同一个人</h2>
+      <p>
+        v4.1 及之前，App 内的 Gal 布局和桌面悬浮窗各自维护自己的状态。
+        App 里的天爱星在微笑，桌面上的还在发呆——分裂感。<br/><br/>
+        v4.2~v4.3 搭建了全局状态中心，让 App 内和桌宠共享同一个角色+情绪。
+        同时把桌宠从"能看不能摸"升级为完整的交互系统：点击弹聊天、长按出控制菜单、拖拽带惯性。
+      </p>
+
+      <h2>Core 1（v4.2）：全局状态中心</h2>
+
+      <h3>CharacterStateHolder — 单例 mutableStateOf</h3>
+      <pre><code>object CharacterStateHolder {
+    var emotion: CharacterEmotion by mutableStateOf(CharacterEmotion.IDLE)
+    var role: String        by mutableStateOf(CharacterPackRegistry.default.id)
+    val currentPack: CharacterPack get() = CharacterPackRegistry.findById(role)
+}</code></pre>
+      <p>
+        不同于 ViewModel 的 StateFlow，<code>mutableStateOf</code> 直接支持 Compose 重组
+        ——App 内 GalGameChatLayout 和桌宠 DesktopPetView 同时订阅，任一处修改立即双向同步。
+      </p>
+
+      <h3>EmotionBridge — LLM 情绪注入</h3>
+      <pre><code>object EmotionBridge {
+    fun apply(emotion: CharacterEmotion) {
+        CharacterStateHolder.emotion = emotion
+    }
+}</code></pre>
+      <p>ChatViewModel 在 4 个情绪变化点（流式开始→THINKING、流结束→解析情绪、错误→IDLE、取消→IDLE）全都写入 CharacterStateHolder。</p>
+
+      <h3>RoleManager — 委托 CharacterPackRegistry</h3>
+      <pre><code>object RoleManager {
+    val roles: List&lt;String&gt; get() = CharacterPackRegistry.packs.map { it.id }
+    fun switch(roleId: String) { CharacterStateHolder.role = roleId }
+}</code></pre>
+
+      <h3>CharacterBackground — 封装 CharacterView</h3>
+      <p>
+        从 assets 动态加载，接收 <code>role: String + emotion: CharacterEmotion</code>。
+        不依赖 <code>R.drawable</code>，新增角色只需放图片 + 注册。
+      </p>
+
+      <h3>KokoroTTSBridge — 一调即播</h3>
+      <pre><code>object KokoroTTSBridge {
+    fun init(context: Context) { ... }
+    fun speak(text: String) { KokoroTTSManager.getInstance(ctx!!).feedStream(text) }
+}</code></pre>
+
+      <h2>Core 2（v4.3）：桌宠交互系统</h2>
+
+      <h3>PetCommandCenter — 全局可见性</h3>
+      <pre><code>object PetCommandCenter {
+    var isVisible by mutableStateOf(false)
+    fun show()  { isVisible = true }
+    fun hide()  { isVisible = false }
+    fun toggle() { isVisible = !isVisible }
+}</code></pre>
+      <p>
+        DesktopAgentService 的 ComposeView 内用 <code>if (PetCommandCenter.isVisible)</code> 包裹 DesktopPetView。
+        App 回到前台时 <code>hide()</code>，退后台时 <code>show()</code>，完全由状态驱动。
+      </p>
+
+      <h3>ChatOverlay — 悬浮聊天框</h3>
+      <p>点击桌宠 → 全屏半透明遮罩 + 380dp 聊天卡片弹出。含顶栏（关闭按钮）、欢迎语区域、快捷按钮。</p>
+      <table class="changelog-table">
+        <thead><tr><th>操控</th><th>行为</th></tr></thead>
+        <tbody>
+          <tr><td>点击桌宠</td><td><code>ChatOverlayController.show()</code> → 悬浮聊天框</td></tr>
+          <tr><td>点击关闭 / 外部</td><td><code>ChatOverlayController.hide()</code></td></tr>
+          <tr><td>长按桌宠</td><td>AlertDialog 三选一（关闭桌宠 / 取消 / 打开 App）</td></tr>
+        </tbody>
+      </table>
+
+      <h3>FloatingTouchController — 惯性拖拽</h3>
+      <p>替代旧版 GestureDetector.onScroll 简单跟随。完整链路：</p>
+      <pre><code>ACTION_DOWN  → 记录 rawX/rawY + 时间戳
+ACTION_MOVE  → 累加 dx/dy → onMove 回调更新 WindowManager params
+            → 计算速度 vx = dx/dt*16, vy = dy/dt*16
+ACTION_UP    → 启动惯性线程：
+               while (速度 &gt; 1px && 帧数 &lt; 60) {
+                   vx *= 0.92;  vy *= 0.92
+                   onMove(vx, vy)
+                   Thread.sleep(16)
+               }
+               → snapToEdge() (预留)</code></pre>
+      <p>
+        关键设计：GestureDetector 仍负责点击/长按检测，FloatingTouchController 负责位移+惯性。
+        两者通过同一 <code>setOnTouchListener</code> 协作——GestureDetector.onTouchEvent 拿到事件后，
+        FloatingTouchController 跟踪 MOVE 和 UP，互不干扰。
+      </p>
+
+      <h3>DesktopAgentService 重构</h3>
+      <table class="changelog-table">
+        <thead><tr><th>旧</th><th>新</th></tr></thead>
+        <tbody>
+          <tr><td>手动 <code>currentEmotion: MutableState</code></td><td>委托 <code>CharacterStateHolder.emotion</code></td></tr>
+          <tr><td><code>buildOverlayView()</code> OverlayCharacter</td><td><code>buildPetView()</code> DesktopPetView + PetCommandCenter</td></tr>
+          <tr><td>GestureDetector.onScroll 跟随</td><td>FloatingTouchController 速度+惯性</td></tr>
+          <tr><td>拖拽状态字段 ×5</td><td>全部移除（FloatingTouchController 内聚）</td></tr>
+        </tbody>
+      </table>
+
+      <h2>文件变更</h2>
+      <table class="changelog-table">
+        <thead><tr><th>文件</th><th>v4.2→v4.3 操作</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">CharacterStateHolder.kt</td><td>🆕 新建</td></tr>
+          <tr><td class="mono">RoleManager.kt</td><td>🆕 新建</td></tr>
+          <tr><td class="mono">EmotionBridge.kt</td><td>🆕 新建</td></tr>
+          <tr><td class="mono">CharacterBackground.kt</td><td>🆕 新建</td></tr>
+          <tr><td class="mono">KokoroTTSBridge.kt</td><td>🆕 新建</td></tr>
+          <tr><td class="mono">PetCommandCenter.kt</td><td>🆕 新建</td></tr>
+          <tr><td class="mono">ChatOverlay.kt</td><td>🆕 新建</td></tr>
+          <tr><td class="mono">ChatOverlayController.kt</td><td>🆕 新建</td></tr>
+          <tr><td class="mono">FloatingTouchController.kt</td><td>🆕 新建</td></tr>
+          <tr><td class="mono">DesktopPetView.kt</td><td>📝 加 pointerInput 手势</td></tr>
+          <tr><td class="mono">DesktopAgentService.kt</td><td>📝 重写（PetCommandCenter + FloatingTouchController）</td></tr>
+          <tr><td class="mono">ChatViewModel.kt</td><td>📝 4 处情绪同步到 StateHolder</td></tr>
+          <tr><td class="mono">CharacterPackViewModel.kt</td><td>📝 selectPack 同步 StateHolder.role</td></tr>
+        </tbody>
+      </table>
+
+      <h2>统计</h2>
+      <ul>
+        <li><strong>源码</strong>：7,463 行 / 67 文件 / 290 KB</li>
+        <li><strong>APK</strong>：~245 MB</li>
+        <li><strong>编译</strong>：BUILD SUCCESSFUL，零新增 warning</li>
+        <li><strong>迭代</strong>：v0.1 → v4.3，10 个大版本</li>
+      </ul>
+
+      <h2>下步</h2>
+      <ol>
+        <li>吸边逻辑实现（snapToEdge 预留骨架）</li>
+        <li>ChatOverlay 接入轻量 LLM 实时对话</li>
+        <li>Live2D 实际模型包接入</li>
+        <li>悬浮窗拖拽边界约束</li>
+      </ol>
+
+      </div>
+
+    </article>
+
+    <nav class="post-nav">
+      <a href="tian-aixing-agent-v4.1-upgrade.html">← v4.1 纯渐变立绘布局</a>
+      <a href="index.html">⌂ 首页</a>
+    </nav>
+  </main>
+
+  <div class="reading-bar" id="readingBar"></div>
+  <script>
+    window.addEventListener('scroll', () => {
+      const pct = Math.min((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100, 100);
+      document.getElementById('readingBar').style.width = pct + '%';
+    });
+  </script>
+</body>
+</html>
