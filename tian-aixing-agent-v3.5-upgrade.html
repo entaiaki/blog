@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v3.5：LLM 流式响应 &amp; 折叠屏适配 &amp; TTS 断句重写 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c9a84c" opacity="0.8">No.1</text>
+    </svg>
+  </div>
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/><text x="60" y="439" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c9a84c" opacity="0.8">No.2</text>
+    </svg>
+  </div>
+
+  <div class="topbar">
+    <div class="signal">
+      <div class="signal-dot signal-dot--on"></div>
+      <div class="signal-dot signal-dot--on"></div>
+      <div class="signal-dot signal-dot--off"></div>
+    </div>
+    <a href="index.html" class="site-title">最弱无败芦毛怪</a>
+    <span class="site-sub">学习日志 &amp; 开发记录</span>
+  </div>
+
+  <div class="reading-bar" id="readingBar"></div>
+
+  <div class="page-wrap">
+
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-meta-row">
+          <span class="post-cat cat--dev">开发</span>
+        </div>
+        <h1 class="post-heading">天爱星Agent v3.5：LLM 流式响应 &amp; 折叠屏适配 &amp; TTS 断句重写</h1>
+        <p class="post-sub">LLMClient SSE 流式 · ChatViewModel 流式+实时 TTS 联动 · 折叠屏自适应 · CharacterView 精简 · KokoroTTSManager 三级断句</p>
+        <time class="post-date-full">2026.06.24</time>
+      </header>
+
+      <div class="post-body">
+
+      <h2>动机：告别等待，边收边说</h2>
+      <p>
+        v3.4 及之前，LLM 回复要等完整返回后才显示并 TTS 播放。用户体验是一段长时间空白 → 突然一大段文字 + 语音。
+        v3.5 的核心目标：<strong>LLM 边吐字边显示（打字机效果） + 边合成 TTS 边播放</strong>。
+        同时加入折叠屏适配、立绘系统精简、TTS 断句逻辑重写。
+      </p>
+
+      <h2>变更文件清单</h2>
+      <table class="changelog-table">
+        <thead><tr><th>文件</th><th>动作</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">LLMClient.kt</td><td class="tag-rewrite">新增</td><td>+ chatStream(): Flow&lt;String&gt; SSE 流式接口，readTimeout 120s</td></tr>
+          <tr><td class="mono">ChatViewModel.kt</td><td class="tag-rewrite">重写</td><td>send() 全流式管道：collect → 实时 UI + feedStream TTS + 情绪收尾</td></tr>
+          <tr><td class="mono">AndroidManifest.xml</td><td class="tag-modify">修改</td><td>+ configChanges + resizeableActivity 折叠屏防重建</td></tr>
+          <tr><td class="mono">MainActivity.kt</td><td class="tag-rewrite">重写</td><td>+ LocalIsFolded CompositionLocal + detectFolded() 宽高比判断</td></tr>
+          <tr><td class="mono">CharacterView.kt</td><td class="tag-rewrite">重写</td><td>精简为纯 Image 组件，+ contentScale 参数，动画外移</td></tr>
+          <tr><td class="mono">CharacterEmotion.kt</td><td class="tag-modify">修改</td><td>assetName tianai_* → tianaixing_*</td></tr>
+          <tr><td class="mono">GalGameChatLayout.kt</td><td class="tag-rewrite">重写</td><td>消费 LocalIsFolded 动态切换 ContentScale.Fit/Crop</td></tr>
+          <tr><td class="mono">KokoroTTSManager.kt</td><td class="tag-rewrite">重写</td><td>三级断句逻辑 + StringBuilder 缓冲 + suspendCancellableCoroutine</td></tr>
+          <tr><td class="mono">res/drawable/*</td><td class="tag-modify">重命名</td><td>16 个 tianai_*.png → tianaixing_*.png</td></tr>
+        </tbody>
+      </table>
+
+      <h2>1. LLM 流式接口</h2>
+      <pre><code>// 旧：同步等待完整响应
+val reply = llm.chat(messages)  // 阻塞 5~30s
+
+// 新：Flow 流式
+llm.chatStream(messages).collect { chunk ->
+    fullText += chunk
+    updateMessageUI(fullText)     // 实时打字机效果
+    ttsManager.feedStream(chunk)  // 边收边播
+}</code></pre>
+      <p>
+        底层使用 OkHttp 长连接读 SSE（Server-Sent Events），逐行解析 <code>data: {"choices":[{"delta":{"content":"..."}}]}</code>，
+        每收到一个 token 就 emit 到 Flow。解析失败不中断流。
+      </p>
+
+      <h2>2. ChatViewModel 流式管道</h2>
+      <pre><code>send(userInput)
+  ├─ 保存用户消息到 DB + UI
+  ├─ 添加空 assistant 占位消息
+  ├─ llm.chatStream(history).collect { chunk →
+  │    ├─ fullText += chunk
+  │    ├─ 实时更新 _messages[last]（过滤 [EMOTION:xxx]）
+  │    └─ ttsManager.feedStream(cleanChunk)  // 凑够一句自动播
+  │  }
+  ├─ EmotionParser.parse(fullText) → 情绪立绘 + 悬浮窗
+  ├─ ttsManager.flushStream() → 播放缓冲区剩余
+  └─ DB 保存完整回复</code></pre>
+      <p>
+        <code>stopGeneration()</code> 支持中途取消：<code>streamJob?.cancel()</code> + <code>ttsManager.stop()</code>。
+        加载中按钮旋转 90° 变 × 图标。
+      </p>
+
+      <h2>3. 折叠屏适配</h2>
+
+      <h3>检测逻辑</h3>
+      <pre><code>// MainActivity.detectFolded()
+val ratio = dm.widthPixels.toFloat() / dm.heightPixels.toFloat()
+// 内屏 2352×2172 → ratio ≈ 1.08 → isFolded = false
+// 外屏 2376×1060 → ratio ≈ 2.24 → isFolded = true
+return ratio > 1.6f</code></pre>
+
+      <h3>CompositionLocal 传递</h3>
+      <pre><code>val LocalIsFolded = compositionLocalOf { false }
+
+// MainActivity.setContent { CompositionLocalProvider(LocalIsFolded provides isFolded.value) { ... } }
+
+// GalGameChatLayout / GalMessageBubble 任意深处直接读取
+val isFolded = LocalIsFolded.current</code></pre>
+
+      <h3>自适应策略</h3>
+      <table class="changelog-table">
+        <thead><tr><th>场景</th><th>内屏展开</th><th>外屏合上</th></tr></thead>
+        <tbody>
+          <tr><td>立绘缩放</td><td><code>ContentScale.Fit</code>（完整显示 2352×2172）</td><td><code>ContentScale.Crop</code>（裁切两侧白边）</td></tr>
+          <tr><td>消息气泡宽度</td><td><code>fillMaxWidth(0.62f)</code></td><td><code>fillMaxWidth(0.74f)</code>（更宽屏给更多文字空间）</td></tr>
+          <tr><td>ThinkingDots</td><td><code>fillMaxWidth(0.62f)</code></td><td><code>fillMaxWidth(0.72f)</code></td></tr>
+        </tbody>
+      </table>
+      <p>
+        <code>configChanges</code> 声明 10 项配置变化（orientation|screenSize|...），
+        折叠/展开不重建 Activity，<code>onConfigurationChanged</code> 即时更新 <code>isFolded</code> → Compose 自动重组。
+      </p>
+
+      <h2>4. CharacterView 精简</h2>
+      <pre><code>旧（v3.4）：内部自带动画
+  - CharacterView 内含 infiniteTransition → floatY + talkScale + talkBob
+  - AnimatedContent 情绪切换
+  - 约 100 行
+
+新（v3.5）：纯渲染组件
+  - 仅 Image + contentScale + BottomCenter 对齐
+  - 所有动画由外层 GalGameChatLayout 的 graphicsLayer 驱动
+  - 约 40 行</code></pre>
+      <p>
+        资源命名同步改为 <code>tianaixing_*.png</code>，16 个文件全部重命名。
+        <code>contentScale</code> 参数由外层传入，内屏 <code>Fit</code>、外屏 <code>Crop</code>。
+      </p>
+
+      <h2>5. KokoroTTSManager 三级断句</h2>
+      <pre><code>feedStream(chunk) {
+    streamBuffer.append(chunk)
+
+    ① 主断句：遇到 。！？…\n.!? → 立即切一句
+    ② 次级断句：遇到 ，；：,;: 且积累 ≥ 15 字 → 在逗号处切
+    ③ 强制切断：buffer > 50 字仍无标点 → 截断前 50 字
+}</code></pre>
+      <p>
+        缓冲区改用 <code>StringBuilder</code>，播放队列用 <code>consumeQueue()</code> 协程循环替代递归 <code>processNext()</code>，
+        <code>suspendCancellableCoroutine</code> 支持取消传播。
+        TTS 合成由 <code>KokoroTTS.synthesizeToFile</code> → MediaPlayer 播放。
+      </p>
+
+      <h2>构建结果</h2>
+      <pre><code>BUILD SUCCESSFUL in 2s
+38 actionable tasks: 7 executed, 31 up-to-date
+零警告 · 零编译错误</code></pre>
+
+      <h2>版本对比总表</h2>
+      <table class="changelog-table">
+        <thead><tr><th>维度</th><th>v3.4</th><th>v3.5</th></tr></thead>
+        <tbody>
+          <tr><td>LLM 响应</td><td>完整返回后再显示+播放</td><td>逐 token 流式 → 打字机 + 边收边播</td></tr>
+          <tr><td>折叠屏</td><td>不支持，外屏拉伸</td><td>自适应 Fit/Crop + 气泡宽度动态调整</td></tr>
+          <tr><td>CharacterView</td><td>~100 行，内部动画</td><td>~40 行，纯 Image 渲染</td></tr>
+          <tr><td>TTS 断句</td><td>简单标点切割</td><td>三级断句 + StringBuilder 缓冲</td></tr>
+          <tr><td>TTS 播放</td><td>递归 processNext()</td><td>协程循环 + suspendCancellableCoroutine</td></tr>
+          <tr><td>资源命名</td><td>tianai_*.png</td><td>tianaixing_*.png</td></tr>
+          <tr><td>源码行数</td><td>6,073 行 / 57 文件</td><td>6,697 行 / 54 文件</td></tr>
+          <tr><td>APK 大小</td><td>245 MB</td><td>245 MB</td></tr>
+        </tbody>
+      </table>
+
+      <h2>数据流全景（v3.5 最终态）</h2>
+      <pre><code>用户输入
+  ↓
+ChatViewModel.send()
+  ↓
+LLMClient.chatStream() ─── SSE 流式 ──→ collect { chunk →
+  ├─ _messages[last] 实时更新（打字机效果）
+  └─ KokoroTTSManager.feedStream(chunk)
+       ├─ 主断句（。！？）→ 立即合成+播放
+       ├─ 次级断句（，；：≥15字）→ 延迟切句
+       └─ 强制切断（>50字）→ 兜底
+  }
+  ↓
+流式结束
+  ├─ EmotionParser → 情绪立绘 + 悬浮窗更新
+  ├─ flushStream() → 播放缓冲剩余
+  └─ DB 保存完整回复</code></pre>
+
+      <h2>下一步</h2>
+      <ul>
+        <li>KokoroTTSManager 流式合成（LLM 边输出边 ONNX 推理，不等完整句子）</li>
+        <li>Live2D Cubism 模型接入（替换静态 PNG 立绘）</li>
+        <li>悬浮窗拖拽边界约束 + 吸附边缘效果</li>
+        <li>APK 瘦身（WebP 立绘、模型量化 int8）</li>
+      </ul>
+
+      <nav class="post-nav">
+        <a class="post-nav-link post-nav-link--prev" href="tian-aixing-agent-v3.4-upgrade.html">
+          ← 天爱星Agent v3.4：立绘背景一体化
+        </a>
+        <a class="post-nav-link post-nav-link--next" href="tian-aixing-agent-v3.3.1-upgrade.html">
+          天爱星Agent v3.3.1 桌宠动画重构 →
+        </a>
+      </nav>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <span>最弱无败芦毛怪</span>
+    <span class="sep">·</span>
+    <span>学习日志 &amp; 开发记录</span>
+    <span class="sep">·</span>
+    <span id="footerYear"></span>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
