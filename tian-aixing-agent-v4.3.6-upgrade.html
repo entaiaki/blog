@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v4.3.5→v4.3.6：悬浮窗 3 层触摸模型重构 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+    </svg>
+  </div>
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+    </svg>
+  </div>
+
+  <main class="post-main">
+    <article class="post-article">
+      <header class="post-header">
+        <p class="post-kicker">开发日志 · LightAgent for Android</p>
+        <h1>天爱星Agent v4.3.5→v4.3.6</h1>
+        <p class="post-subtitle">悬浮窗 3 层触摸模型重构：click/drag 彻底分家 + 双保险防误触关闭</p>
+        <p class="post-date">2026-06-24</p>
+      </header>
+
+      <section class="post-section">
+        <h2>根因：GestureDetector + setOnTouchListener 混用</h2>
+        <p>v4.3.4~v4.3.5 的触摸架构存在结构性问题：</p>
+        <ul>
+          <li><code>setOnTouchListener</code> 先拦截 → 检测 X 区域 → 剩余交 <code>GestureDetector</code></li>
+          <li><code>GestureDetector.onSingleTapConfirmed()</code> 有 300ms 延迟，体感卡顿</li>
+          <li>X 区域用坐标判断 → DOWN/UP 位置抖动 → 误关闭</li>
+          <li>拖拽和点击在 GestureDetector 内混判，边界模糊</li>
+        </ul>
+        <p><strong>整条链路 3 个组件协作，任何一个抖动都会污染结果。</strong></p>
+      </section>
+
+      <section class="post-section">
+        <h2>方案：标准桌宠 3 层模型</h2>
+
+        <pre class="code-block"><code>┌──────────────────────────┐
+│ OverlayRoot              │
+│                          │
+│  ┌──── Close(X) ──────┐ │  ← isOnCloseArea() 精确区域 + 二次确认
+│  └────────────────────┘ │
+│                          │
+│  ┌── Character Layer ─┐ │  ← 单击 → 打开悬浮聊天框
+│  └────────────────────┘ │
+│                          │
+│  Background (drag only)  │  ← FloatingTouchController 惯性拖拽
+└──────────────────────────┘</code></pre>
+
+        <p>核心组件从 3 个（setOnTouchListener + GestureDetector + FloatingTouchController）精简为 <strong>1 个 OverlayTouchController</strong>：</p>
+
+        <pre class="code-block"><code>class OverlayTouchController(
+    onOpenChat      : () -> Unit,       // 非 X 区域单击
+    onClose         : () -> Unit,       // X 区域二次确认后
+    onCloseHint     : (() -> Unit)?,    // 第一次点 X → Toast
+    onDragMove      : (Float,Float)->Unit,  // 拖拽位移
+    onDragUp        : () -> Unit,       // 拖拽结束
+    onLongPress     : (() -> Unit)?,    // 身体区域长按
+    isOnCloseArea   : (Float,Float)->Boolean  // X 区域判定
+)</code></pre>
+      </section>
+
+      <section class="post-section">
+        <h2>防误触关闭（三保险）</h2>
+
+        <table>
+          <tr><th>保险</th><th>机制</th><th>阈值</th></tr>
+          <tr>
+            <td>#1 区域限制</td>
+            <td><code>isOnCloseArea(x,y)</code> — 手指必须落在 X 按钮 30dp 区域内</td>
+            <td>局部坐标精确匹配</td>
+          </tr>
+          <tr>
+            <td>#2 明确点击</td>
+            <td>dx &lt; 10px && dy &lt; 10px && dt &lt; 250ms — 短按+小移动才是点击</td>
+            <td>排除拖动和长按</td>
+          </tr>
+          <tr>
+            <td>#3 二次确认</td>
+            <td>第一次点 X → Toast "再点一次"；3 秒内在 X 区域再点 → 执行关闭</td>
+            <td>排除手滑和抖动</td>
+          </tr>
+        </table>
+
+        <pre class="code-block"><code>fun onTouchEvent(event: MotionEvent): Boolean {
+    when (event.action) {
+        ACTION_DOWN -> { 记录位置+时间; floatTouch.onTouchEvent(event) }
+        ACTION_MOVE -> { floatTouch.onTouchEvent(event); 检测长按 }
+        ACTION_UP   -> {
+            if (isClick) {
+                if (isOnCloseArea) handleCloseClick()   // → 二次确认
+                else onOpenChat()                       // → 悬浮聊天框
+            } else {
+                floatTouch.onTouchEvent(event)           // → 惯性动画
+            }
+        }
+    }
+}</code></pre>
+      </section>
+
+      <section class="post-section">
+        <h2>变更对比</h2>
+
+        <table>
+          <tr><th>维度</th><th>v4.3.5</th><th>v4.3.6</th></tr>
+          <tr><td>触摸分发</td><td>setOnTouchListener → GestureDetector → FloatingTouchController</td><td>OverlayTouchController 统一入口</td></tr>
+          <tr><td>点击响应</td><td>GestureDetector.onSingleTapConfirmed()（~300ms 延迟）</td><td>ACTION_UP 即时判断（~0ms 延迟）</td></tr>
+          <tr><td>X 关闭</td><td>DOWN/UP 坐标判断 → dismissPetWindowOnly()</td><td>区域 + 点击判定 + 二次确认</td></tr>
+          <tr><td>长按菜单</td><td>GestureDetector.onLongPress()</td><td>ACTION_MOVE 静置检测 ≥500ms</td></tr>
+          <tr><td>关闭安全性</td><td>单保险（仅坐标）</td><td>三保险（区域+点击+二次确认）</td></tr>
+          <tr><td>组件数</td><td>3 个</td><td>1 个</td></tr>
+          <tr><td>clickable 标记</td><td>ComposeView.isClickable = true</td><td>已移除（View 层不消费事件）</td></tr>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>构建指标</h2>
+        <table>
+          <tr><td>构建结果</td><td><span class="badge-ok">BUILD SUCCESSFUL</span>（零 warning）</td></tr>
+          <tr><td>Kotlin 源文件</td><td>69 个（+1：OverlayTouchController.kt）</td></tr>
+          <tr><td>源码行数</td><td>7,089 行</td></tr>
+          <tr><td>源码导出</td><td>294 KB</td></tr>
+          <tr><td>APK 大小</td><td>238 MB（debug）</td></tr>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>变更文件</h2>
+        <ul>
+          <li><strong>新增</strong> <code>OverlayTouchController.kt</code> — 3 层触摸控制器（113 行）</li>
+          <li><strong>重写</strong> <code>DesktopAgentService.buildPetView()</code> — GestureDetector + setOnTouchListener → OverlayTouchController</li>
+          <li><strong>精简</strong> <code>DesktopAgentService.showCloseMenu()</code> — AlertDialog → 列表选择器</li>
+        </ul>
+        <p><code>DesktopPetView.kt</code> 和 <code>FloatingTouchController.kt</code> 无需改动 — X 按钮保持纯视觉，拖拽控制器由 OverlayTouchController 内部接管。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>设计原则</h2>
+        <ol>
+          <li><strong>不用 clickable / setOnClickListener</strong> — 全部走 onTouchListener</li>
+          <li><strong>点击 vs 拖拽在 UP 事件分叉</strong> — 不是 onSingleTapConfirmed vs onScroll</li>
+          <li><strong>关闭必须"明确且有意"</strong> — 两次点击 X 才能关，一次拖拽就取消待确认</li>
+          <li><strong>桌宠 = Chat 入口</strong> — 点击身体区域打开悬浮聊天框，行为和 ChatScreen 完全一致</li>
+        </ol>
+      </section>
+    </article>
+  </main>
+</body>
+</html>
