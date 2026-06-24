@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v4.0→v4.1：多角色包 &amp; 纯渐变立绘布局 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <line x1="42" y1="434" x2="58" y2="434" stroke="#e8c96d" stroke-width="0.8" opacity="0.5"/><line x1="42" y1="440" x2="58" y2="440" stroke="#e8c96d" stroke-width="0.8" opacity="0.5"/><line x1="42" y1="446" x2="55" y2="446" stroke="#e8c96d" stroke-width="0.8" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <line x1="18" y1="80" x2="34" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="120" x2="34" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="160" x2="34" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="18" y1="200" x2="34" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <line x1="86" y1="80" x2="102" y2="100" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="120" x2="102" y2="140" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="160" x2="102" y2="180" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/><line x1="86" y1="200" x2="102" y2="220" stroke="#c9a84c" stroke-width="0.8" opacity="0.5"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/><rect x="10" y="340" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/><rect x="10" y="370" width="100" height="8" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="8" y="646" width="104" height="10" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="2" y="656" width="116" height="8" rx="2" fill="none" stroke="#c9a84c" stroke-width="1.2"/><rect x="8" y="664" width="104" height="30" rx="1" fill="none" stroke="#c9c9c9" stroke-width="1"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <line x1="42" y1="434" x2="58" y2="434" stroke="#e8c96d" stroke-width="0.8" opacity="0.5"/><line x1="42" y1="440" x2="58" y2="440" stroke="#e8c96d" stroke-width="0.8" opacity="0.5"/><line x1="42" y1="446" x2="55" y2="446" stroke="#e8c96d" stroke-width="0.8" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <main class="post-main">
+    <article class="post-article">
+
+      <header class="post-header">
+        <p class="post-kicker">开发日志 · LightAgent for Android</p>
+        <h1 class="post-title">天爱星Agent v4.0 → v4.1<br/>多角色包 &amp; 纯渐变立绘布局</h1>
+        <p class="post-sub">星野爱加入 · 立绘动态加载 · 背景图退场 · 立绘成为唯一视觉主角 · 气泡/输入栏/指示器全线重构</p>
+        <time class="post-date-full">2026.06.24</time>
+      </header>
+
+      <div class="post-body">
+
+      <h2>动机：立绘为什么不该压在背景图上？</h2>
+      <p>
+        v3.5~v3.6，Gal 布局是 5 层结构：套系背景图 → 半透明遮罩 → 立绘 → 渐变蒙层 → UI。<br/><br/>
+        问题是：<strong>背景图抢戏</strong>。樱花纷飞、霓虹闪烁确实好看，但它们把立绘压成了"配菜"。
+        一张 png 角色站在一张风景照上，不像 Galgame，像 PS 新手练手。<br/><br/>
+        真正的视觉小说只会用纯色 / 模糊 / 极简背景。主角永远是角色自己。
+        v4.1 做了这个减法——删掉背景图+遮罩两层，让立绘在深夜蓝紫渐变上成为唯一的视觉焦点。
+        与此同时，v4.0 把角色系统从硬编码单角色扩展到了注册表式多角色包。
+      </p>
+
+      <h2>Core 1（v4.0）：多角色包系统</h2>
+      <p>
+        旧的 <code>CharacterView</code> 硬编码 <code>R.drawable.tianaixing_idle</code>，新增角色需要改 Kotlin 代码 +
+        放 drawable 资源。v4.0 彻底重写：
+      </p>
+
+      <h3>CharacterPack — 注册表式角色定义</h3>
+      <pre><code>data class CharacterPack(
+    val id       : String,   // 唯一标识，如 "tianaixing"
+    val name     : String,   // 天爱星
+    val folder   : String,   // assets/characters/{folder}/
+    val emoji    : String,   // 🌟
+    val labelJa  : String    // 天愛星（あい）
+)
+
+object CharacterPackRegistry {
+    val packs = listOf(
+        CharacterPack("tianaixing", "天爱星", "tianaixing", "🌟", "天愛星"),
+        CharacterPack("hoshino_ai", "星野爱", "hoshino_ai", "💜", "星野アイ"),
+        // 新增角色只需加一行数据 + 放图片到 assets
+    )
+    fun findById(id: String) = packs.find { it.id == id }
+}</code></pre>
+
+      <h3>CharacterView — 动态路径加载</h3>
+      <pre><code>// 旧：硬编码 R.drawable
+Image(painter = painterResource(R.drawable.tianaixing_idle), ...)
+
+// 新：从 assets 动态加载
+val path = "file:///android_asset/characters/${pack.folder}/${emotion.name.lowercase()}.png"
+AsyncImage(model = path, contentDescription = emotion.name, ...)</code></pre>
+
+      <p>图片路径规范：<code>assets/characters/{folder}/{emotion_name_lowercase}.png</code>。
+      不支持的情绪自动回退 <code>idle.png</code>，图片缺失回退 Canvas emoji 占位。</p>
+
+      <h3>CharacterPackSheet — 角色切换 UI</h3>
+      <p>
+        <code>ModalBottomSheet</code> 卡片式选择器：120×180 角色预览图 + 渐变底部遮罩 +
+        日文标注 + 选中紫色边框 <code>✓</code>。<br/>
+        角色切换触发 <code>AnimatedContent</code> 过渡——key 改为 <code>Pair(pack.id, emotion)</code>，
+        换角色和换情绪共用同一套动画。
+      </p>
+
+      <h3>持久化</h3>
+      <p>
+        <code>CharacterPackManager</code> 使用独立 <code>SharedPreferences("character_pack")</code> 持久化当前角色，
+        与 <code>LLMConfigStore</code> 模式一致。
+      </p>
+
+      <h2>Core 2（v4.1）：纯渐变立绘布局</h2>
+
+      <table class="changelog-table">
+        <thead><tr><th>层</th><th>v3.6（旧）</th><th>v4.1（新）</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>GalBackground — 套系图/自定义图填全屏</td><td class="mono">🔵 纯色渐变（0D0D1A → 1A1A3E）</td></tr>
+          <tr><td>2</td><td>半透明遮罩 (alpha=0.25)</td><td class="mono">❌ 删除</td></tr>
+          <tr><td>3</td><td>立绘（底部对齐）</td><td class="mono">立绘 —— 视觉主角</td></tr>
+          <tr><td>4</td><td>底部渐变蒙层 + UI</td><td class="mono">底部渐变蒙层 + UI</td></tr>
+        </tbody>
+      </table>
+
+      <p>关键变化：</p>
+      <ul>
+        <li><code>GalGameChatLayout.kt</code> — <code>background: BackgroundSource</code> 参数移除</li>
+        <li><code>ChatScreen.kt</code> — <code>background</code> 状态收集移除，调用点去参</li>
+        <li>未用导入清理：<code>BackgroundSource</code>、<code>TransformOrigin</code>、<code>Icons.Default.Close</code></li>
+        <li>顶栏背景按钮保留——暂时收着，哪天想加回来也方便</li>
+      </ul>
+
+      <h2>Core 3（v4.1）：UI 组件全线重构</h2>
+
+      <h3>ChatTopBar — 标题栏提纯</h3>
+      <pre><code>// 旧：四参数 colors 分散定义
+TopAppBar(title = { Text(convTitle) }, ...)
+
+// 新：显式 color + MaterialTheme 排版
+Text(text = convTitle, color = TextPrimary, style = MaterialTheme.typography.titleMedium)
+// containerColor 单一 Color.Transparent，其余 tint 直接写在 Icon 上</code></pre>
+
+      <h3>GalMessageBubble — 气泡重塑</h3>
+      <table class="changelog-table">
+        <thead><tr><th>属性</th><th>旧</th><th>新</th></tr></thead>
+        <tbody>
+          <tr><td>颜色（用户）</td><td class="mono">UserBubble</td><td class="mono">0xCC6B4EFF（紫色半透明）</td></tr>
+          <tr><td>颜色（AI）</td><td class="mono">AssistantBubble</td><td class="mono">0xCC1E1E3A（深蓝半透明）</td></tr>
+          <tr><td>最大宽度</td><td>折叠 280 / 展开 320 dp</td><td class="mono">固定 280dp</td></tr>
+          <tr><td>圆角</td><td class="mono">14dp</td><td class="mono">18dp / 4dp（非对称）</td></tr>
+          <tr><td>折叠屏适配</td><td>LocalIsFolded 分支</td><td>❌ 移除（气泡内）</td></tr>
+        </tbody>
+      </table>
+
+      <h3>GalTypingIndicator — 动画精简</h3>
+      <pre><code>// 旧：三个独立 animateFloat + delayMillis 模拟波浪
+val dots = listOf(
+    animateFloat(..., delayMillis=0),
+    animateFloat(..., delayMillis=200),
+    animateFloat(..., delayMillis=400)
+)
+
+// 新：一个 animateFloat + StartOffset(200ms 间隔)
+repeat(3) { index ->
+    animateFloat(..., initialStartOffset = StartOffset(index * 200))
+}</code></pre>
+      <p>从 19 行压到 12 行，语义更清晰，点大小从 8dp → 6dp 更精致。</p>
+
+      <h3>ChatInputBar → GalInputBar — 去动画化</h3>
+      <p>
+        旧 <code>ChatInputBar</code> 包含发送按钮的旋转/缩放/颜色动画、loading 状态切换的关闭按钮——
+        在只有 SSE 流式回复的场景里纯属过度设计。新 <code>GalInputBar</code>：
+      </p>
+      <ul>
+        <li>参数从 4 个减为 3 个（去掉 <code>isLoading</code>）</li>
+        <li>发送按钮改为条件激活：无输入时灰色 0.15α，有输入时 AccentPurple</li>
+        <li>所有 <code>LaunchedEffect</code> / <code>animateFloatAsState</code> / <code>spring</code> 移除</li>
+        <li>新增 <code>navigationBarsPadding()</code> 适配全面屏</li>
+        <li>输入框容器色改为 <code>0x44000000</code> / <code>0x33000000</code> 半透明而非纯透明</li>
+      </ul>
+
+      <h2>文件变更</h2>
+      <table class="changelog-table">
+        <thead><tr><th>文件</th><th>v4.0→v4.1 操作</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">CharacterPack.kt</td><td>🆕 新建（v4.0）</td></tr>
+          <tr><td class="mono">CharacterPackManager.kt</td><td>🆕 新建（v4.0）</td></tr>
+          <tr><td class="mono">CharacterView.kt</td><td>📝 重写（v4.0）</td></tr>
+          <tr><td class="mono">CharacterPackViewModel.kt</td><td>🆕 新建（v4.0）</td></tr>
+          <tr><td class="mono">CharacterPackSheet.kt</td><td>🆕 新建（v4.0）</td></tr>
+          <tr><td class="mono">GalGameChatLayout.kt</td><td>📝 两轮修改（v4.0 角色按钮 + v4.1 全线重构）</td></tr>
+          <tr><td class="mono">ChatScreen.kt</td><td>📝 两轮修改（v4.0 角色串接 + v4.1 去 background）</td></tr>
+          <tr><td class="mono">ChatInputBar / GalInputBar</td><td>♻ 重命名 + 去动画（v4.1）</td></tr>
+        </tbody>
+      </table>
+
+      <h2>统计</h2>
+      <ul>
+        <li><strong>源码</strong>：6,805 行 / 57 文件 / 266 KB</li>
+        <li><strong>APK</strong>：~245 MB（含 Kokoro ONNX 模型 200 MB）</li>
+        <li><strong>编译</strong>：BUILD SUCCESSFUL，零错误，一 warning（Live2D 预留参数）</li>
+        <li><strong>迭代</strong>：v0.1 → v4.1，跨越 8 个大版本</li>
+      </ul>
+
+      <h2>下步</h2>
+      <ol>
+        <li>Live2D Cu<b></b>bism 模型实际接入（当前 SDK 框架已就位，缺模型包）</li>
+        <li><code>res/drawable</code> 残留角色图 → <code>assets/characters/</code> 迁移</li>
+        <li>悬浮窗拖拽吸附 + 边界约束</li>
+        <li>联网搜索工具接入（Puppeteer → Android WebView bridge）</li>
+      </ol>
+
+      </div>
+
+    </article>
+
+    <nav class="post-nav">
+      <a href="tian-aixing-agent-v3.6-upgrade.html">← v3.6 背景套系系统</a>
+      <a href="index.html">⌂ 首页</a>
+    </nav>
+  </main>
+
+  <div class="reading-bar" id="readingBar"></div>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+      document.getElementById('readingBar').style.width = progress + '%';
+    });
+  </script>
+
+</body>
+</html>
