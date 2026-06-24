@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>天爱星Agent v4.3→v4.3.1：新角色包 &amp; 桌宠拖拽三连修复 — 最弱无败芦毛怪</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="gate gate--left" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <div class="gate gate--right" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 120 700" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="18" width="100" height="8" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="35" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="60" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/><circle cx="85" cy="10" r="7" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="35" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="60" cy="10" r="4" fill="#e8c96d" opacity="0.45"/><circle cx="85" cy="10" r="4" fill="#e8c96d" opacity="0.45"/>
+      <rect x="18" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/><rect x="86" y="26" width="16" height="620" rx="2" fill="none" stroke="#c9c9c9" stroke-width="1.2"/>
+      <rect x="10" y="290" width="100" height="14" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <rect x="38" y="420" width="44" height="28" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <main class="post-main">
+    <article class="post-article">
+
+      <header class="post-header">
+        <p class="post-kicker">开发日志 · LightAgent for Android</p>
+        <h1>天爱星Agent v4.3→v4.3.1</h1>
+        <p class="post-subtitle">新角色包 illust1 / illust2 + 桌宠拖拽三连修复 + InteractionBridge 交互桥</p>
+        <p class="post-date">2026-06-24</p>
+      </header>
+
+      <section class="post-section">
+        <h2>一、立绘1 &amp; 立绘2 处理版上线</h2>
+
+        <p>上版本只放了原始 png，这版替换为 padded 处理后的 jpg：</p>
+
+        <table class="post-table">
+          <thead>
+            <tr><th>包</th><th>图片数</th><th>情绪覆盖</th><th>格式</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>illust1</code></td><td>16</td><td>全套 16 情绪</td><td>jpg</td></tr>
+            <tr><td><code>illust2</code></td><td>12</td><td>idle / happy / sad / angry / sobbing / crying / drowsy / depressed / disgusted / distressed / serious / wink</td><td>jpg</td></tr>
+          </tbody>
+        </table>
+
+        <p>为支持混合 png/jpg，<code>CharacterPack</code> 新增 <code>assetExtension</code> 字段：</p>
+
+        <pre class="code-block"><code>data class CharacterPack(
+    ...
+    val assetExtension: String = "png"  // ← 新增，illust1/2 设为 "jpg"
+)
+
+fun assetPath(emotion: CharacterEmotion): String {
+    val target = if (emotion in supportedEmotions) emotion else CharacterEmotion.IDLE
+    return "characters/$folder/${target.name.lowercase()}.$assetExtension"
+}</code></pre>
+      </section>
+
+      <section class="post-section">
+        <h2>二、桌宠拖拽三连修复</h2>
+
+        <h3>Bug 1：Y 轴方向反了</h3>
+
+        <p>原代码 <code>params.y - dy</code> — 手指向下拖，窗口反而向上飞。屏幕坐标系 Y↓，手势 delta 也是 Y↓，应该是加法：</p>
+
+        <pre class="code-block"><code>// ❌ 旧
+params.y = params.y - dy.toInt()
+
+// ✅ 修
+params.y = params.y + dy.toInt()</code></pre>
+
+        <h3>Bug 2：惯性动画子线程调用 WindowManager</h3>
+
+        <p><code>FloatingTouchController</code> 的惯性衰减跑在 <code>Thread { ... }</code> 里，直接回调 <code>onMove</code> → <code>windowManager.updateViewLayout()</code> 在子线程必崩。</p>
+
+        <pre class="code-block"><code>val mainHandler = Handler(Looper.getMainLooper())
+val touchController = FloatingTouchController(
+    onMove = { dx, dy ->
+        mainHandler.post {
+            params.x = params.x + dx.toInt()
+            params.y = params.y + dy.toInt()
+            windowManager.updateViewLayout(composeView, params)
+        }
+    },
+    ...
+)</code></pre>
+
+        <h3>Bug 3：ComposeView 不响应触控</h3>
+
+        <p>显式设 <code>isClickable = true</code> / <code>isFocusable = true</code>：</p>
+
+        <pre class="code-block"><code>val composeView = ComposeView(this).apply {
+    isClickable = true
+    isFocusable = true
+    ...
+}</code></pre>
+      </section>
+
+      <section class="post-section">
+        <h2>三、InteractionBridge 交互桥</h2>
+
+        <p>把「桌宠点击」和「聊天框弹出」解耦：</p>
+
+        <pre class="code-block"><code>object InteractionBridge {
+    var onChatRequest: (() -> Unit)? = null
+    fun requestChat() { onChatRequest?.invoke() }
+}
+
+// MainActivity.onCreate
+InteractionBridge.onChatRequest = {
+    ChatOverlayController.show(applicationContext)
+}
+
+// DesktopPetView 点击 → 不再直调 ChatOverlayController
+// → InteractionBridge.requestChat() → Activity 注册的回调</code></pre>
+
+        <p>好处：Service 不持有 Activity 引用，避免生命周期泄漏。</p>
+      </section>
+
+      <section class="post-section">
+        <h2>四、关于“聊天没反应”</h2>
+
+        <p>ChatViewModel 从 v3.x 就用 <strong>流式 SSE</strong> 架构：<code>LLMClient.chatStream()</code> 逐字吐出 + <code>EmotionParser</code> 末尾解析 + Kokoro TTS 实时合成。并没有降级为单次 <code>chatWithEmotion()</code> 调用。</p>
+
+        <p>如果设备上「发消息没回复」，排查方向：</p>
+        <ol>
+          <li>设置页 API Key 是否已填写</li>
+          <li>API 地址是否可达（网络 / 代理）</li>
+          <li>logcat 中搜索 <code>ChatVM</code> 看异常</li>
+        </ol>
+      </section>
+
+      <section class="post-section">
+        <h2>五、变更清单</h2>
+
+        <table class="post-table">
+          <thead>
+            <tr><th>文件</th><th>变更</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>character/CharacterPack.kt</code></td><td>+assetExtension 字段；注册 illust1/illust2</td></tr>
+            <tr><td><code>overlay/DesktopAgentService.kt</code></td><td>Y 轴修复 + mainHandler + 显式 clickable/focusable + 走 Bridge</td></tr>
+            <tr><td><code>overlay/InteractionBridge.kt</code></td><td>🆕 交互桥</td></tr>
+            <tr><td><code>MainActivity.kt</code></td><td>注册 InteractionBridge.onChatRequest</td></tr>
+            <tr><td><code>assets/characters/illust1/</code></td><td>16 jpg（处理版）</td></tr>
+            <tr><td><code>assets/characters/illust2/</code></td><td>12 jpg（处理版）</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="post-section">
+        <h2>六、构建信息</h2>
+
+        <ul>
+          <li>APK：258 MB（68 Kotlin 源文件）</li>
+          <li>源码：7778 行 / 283 KB</li>
+          <li>编译：BUILD SUCCESSFUL，零新增 warning</li>
+          <li>预存 warning（预期未来预留）：<code>isTalking</code> unused in CharacterView、<code>live2DController</code> unused in ChatScreen</li>
+        </ul>
+      </section>
+
+      <footer class="post-footer">
+        <p class="post-back"><a href="index.html">← 返回首页</a></p>
+      </footer>
+
+    </article>
+  </main>
+
+</body>
+</html>
