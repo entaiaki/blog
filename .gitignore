@@ -1,0 +1,15 @@
+# Environment (API keys, secrets)
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
